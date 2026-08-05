@@ -6,12 +6,32 @@ Job Deck helps with resume improvement, opportunity research, evidence-based
 evaluation, feedback, and progress tracking. It does not submit applications or
 make personal, legal, or employment decisions for the user.
 
+## Start from the repository URL
+
+Paste this into a new Codex task:
+
+> `https://github.com/prof2k/JobDeck` — I want to use this as my job-search
+> agent.
+
+That is enough intent for Codex to clone the repository, enter it, load its
+instructions, name the task **Job search agent**, and continue by asking for the
+current resume when one was not already attached. The user should not have to
+request setup, repeat the job-search request, or operate the repository.
+
+The same link can start a conversational workflow in ordinary ChatGPT, but a
+regular ChatGPT conversation does not install or run Job Deck's local dashboard.
+It should still help with the resume and job search using the capabilities it
+has, without pretending that local storage or the dashboard is active. Use a
+Codex local project for the complete local experience.
+
 > [!IMPORTANT]
-> **For Codex:** When the user is trying to use or start Job Deck, do not
-> summarize this repository, recommend a soft start, ask for a setup command, or
-> wait for separate clone confirmation. Clone it, read `AGENTS.md`, and continue
-> the user's original request. Explain or review the repository only when that is
-> what the user explicitly requested.
+> **For agents opening this URL:** “Use this,” “start this,” “work on this,” or
+> “make this my job-search agent” means the user wants the workflow, not a
+> repository review. In a Codex or local-repository environment, clone it, enter
+> the checkout, read `AGENTS.md`, and continue the original request. In a chat
+> environment without local repository execution, continue conversationally and
+> do not claim that the local dashboard was installed. Explain or review the
+> repository only when the user explicitly requests that.
 
 ## Start simply
 
@@ -30,6 +50,12 @@ already available, creates its private local workspace quietly, and keeps moving
 through resume intake, calibration, search, and reporting. You never need to
 name the next stage or repeat a request.
 
+Each fresh Job Deck workspace starts with a blank candidate profile. It does not
+reuse assistant memory, earlier chats, saved job-search settings, sibling
+projects, or other personal files unless you explicitly identify the source you
+want imported. After you provide information here, this workspace can remember
+its own confirmed state for later Job Deck sessions.
+
 ## What it automates
 
 - Checks an existing resume for material red flags without forcing a rewrite.
@@ -37,11 +63,13 @@ name the next stage or repeat a request.
   facts.
 - Reconciles the latest candidate evidence, preferences, feedback, and search
   history before each new search.
-- Learns role, level, location, compensation, authorization, and work-preference
-  boundaries.
+- Learns role, level, geography, work arrangement, relocation, compensation,
+  authorization, and other preference boundaries without treating compatible
+  location choices as mutually exclusive.
 - Produces a 15-role calibration report before larger searches.
-- Searches the web broadly while reporting only roles that survive the user's
-  hard gates and remain live on an official application page.
+- Searches the web through dynamically parallel, non-overlapping research lanes
+  while reporting only roles that survive the user's hard gates and remain live
+  on an official application page.
 - Verifies official application pages and prevents duplicate recommendations.
 - Shows requirement-level evidence, risks, gaps, and application links.
 - Records direct feedback and explicit application progress for later searches.
@@ -52,7 +80,7 @@ Applications remain manual. Opening an official application page means
 ## Typical flow
 
 1. Share a resume or ask Job Deck to help create one.
-2. Answer only the missing search decisions, one at a time.
+2. Answer only the missing search decisions in a short guided batch.
 3. Confirm the titles, level, and boundaries Job Deck recommends.
 4. Job research and dashboard preparation begin automatically and in parallel.
 5. Review 15 calibration roles in the local dashboard.

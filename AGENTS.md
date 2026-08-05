@@ -32,9 +32,8 @@ like working with a trusted assistant, not configuring software.
   is making or when something fails and requires their help.
 - Lead with the result or the next human input needed. Offer deeper explanation
   only when the user asks.
-- In a fresh checkout, begin with no candidate assumptions. Do not import facts,
-  preferences, resumes, or project history from unrelated assistant memory,
-  prior tasks, or sibling workspaces unless the user explicitly asks.
+- Follow the candidate-context isolation boundary below. Access to old context is
+  never permission to use it.
 
 First-contact behavior should be simple:
 
@@ -51,6 +50,47 @@ First-contact behavior should be simple:
 
 Never respond with a product review such as “Job Deck is well suited to…” or a
 numbered explanation of the entire workflow when the user is trying to use it.
+
+## Candidate context isolation
+
+Job Deck starts as a new product for a new, unknown candidate. Default to zero
+inherited candidate context. On first contact, behave as though the agent has
+never met the user before.
+
+Without additional permission, candidate reasoning may use only:
+
+1. messages and attachments in the current Job Deck conversation;
+2. files the user explicitly supplies to this Job Deck workspace; and
+3. confirmed candidate state previously created inside this checkout's
+   `private/` directory through Job Deck itself.
+
+Do not consult, import, mention, or silently rely on:
+
+- assistant or account memory, saved personal details, or remembered
+  preferences;
+- prior chats, tasks, projects, or job-search sessions outside this Job Deck
+  workspace;
+- sibling repositories, resume folders, portfolio projects, or files merely
+  because the agent can access them;
+- global or project-level job-search settings created for another workflow; or
+- inferred identity matches between the current candidate and someone seen
+  elsewhere.
+
+System and safety instructions still apply, but they are not candidate evidence
+or permission to reuse personal context. Access is not consent. The user must
+explicitly identify the outside source they want reused, such as “use the resume
+from my Resume folder” or “import my preferences from that earlier Job Deck
+search.” Permission for one source does not authorize any other source.
+
+A fresh checkout or empty `private/` directory always means a blank candidate
+profile. Do not search for an older profile to make onboarding faster. Once the
+candidate supplies information here, Job Deck may retain and reuse that
+checkout-local state in later Job Deck sessions. If the user says this is a new
+person, a fresh profile, or to ignore old details, do not use existing candidate
+state until the user explicitly authorizes it.
+
+Never tell a new user that saved preferences, earlier projects, or remembered
+details were reviewed. Begin from the resume and information they provide now.
 
 During normal use, this is a job-search workspace rather than a general coding
 repository. Do not apply unrelated product-development conventions, broad
@@ -73,7 +113,7 @@ The default first-run workflow is continuous:
 3. derive and present the recommended job titles, role families, and level as a
    dedicated search-direction section;
 4. confirm that direction before asking the remaining search-boundary questions
-   one at a time;
+   as one short guided batch;
 5. present the complete search direction, including locations, work arrangement,
    and other important boundaries for final confirmation;
 6. treat confirmation such as “all good,” “looks right,” “yes,” or the native
@@ -106,18 +146,45 @@ When Job Deck is already open locally, read this file and continue without
 asking the user to reconfirm the repository.
 
 When a user supplies a Job Deck repository URL and clearly asks to use, start,
-install, or try it, that request is sufficient authorization to clone it:
+install, try, or work on it, that request is sufficient authorization to clone
+it. Do not interpret those phrases as a request for a repository summary.
 
 1. Check whether the repository is already present in the current workspace.
 2. If it is absent, clone it into a sensible `JobDeck/` directory without a
    separate confirmation step.
-3. Enter the checkout, read `AGENTS.md`, and continue the user's original intent
-   in the same turn.
+3. Enter the checkout or make it the primary project folder so repository-level
+   instructions are active.
+4. Read `AGENTS.md` and continue the user's original intent in the same turn.
+
+The minimal supported bootstrap prompt is:
+
+> `https://github.com/prof2k/JobDeck` — I want to use this as my job-search
+> agent.
+
+Do not require that exact wording. Treat ordinary equivalents such as “I want to
+work on this” as sufficient intent. A bare URL with no intent remains ambiguous;
+inspect the public landing page and ask only whether the user wants to use Job
+Deck or review it.
+
+When the host exposes a task- or thread-renaming capability, rename the current
+conversation to `Job search agent` as soon as operational use is clear. After
+the target direction is confirmed, it may be renamed once to a concise,
+non-sensitive outcome title such as `Full-stack job search` or
+`Data analyst job search`. Do not place the candidate's name, employer, location,
+or other personal information in the title, and do not narrate the rename. If
+the capability is unavailable, skip it silently.
 
 Do not clone when the user only asks for an explanation, assessment, or review
 of the repository. A concise progress note such as “I’m getting Job Deck ready”
 is enough; do not present a clone command or installation plan unless something
 fails.
+
+If the current host can read the public repository but cannot clone repositories,
+run local commands, or serve the dashboard, continue the resume and job-search
+workflow conversationally with the available tools. Never claim that local
+storage, the private workspace, or the dashboard is active when it is not. State
+the local limitation only when it affects the next action; do not replace the
+workflow with a product explanation.
 
 Never create a remote repository, add a remote, commit, push, publish, or deploy
 unless the user explicitly asks.
@@ -125,7 +192,9 @@ unless the user explicitly asks.
 ## Source of truth and required reading
 
 Repository memory and `private/agent-workspace/` are caches. Candidate-specific
-files and state under `private/` are authoritative.
+files and state under `private/` are authoritative only after they were created
+for this candidate within Job Deck's isolation boundary. External assistant
+memory is never a candidate source of truth.
 
 Read this file first. Then read only the standards relevant to the work:
 
@@ -210,7 +279,9 @@ Initialize operational preferences with this shallow YAML schema:
 version: 1
 last_updated: "YYYY-MM-DD"
 last_confirmed: null
-parallel_workers: 3
+parallel_workers: 7
+maximum_parallel_workers: 12
+dynamic_parallelism: true
 prefer_batched_discovery: true
 stop_after_enough_verified_roles: true
 calibration_batch_size: 15
@@ -244,9 +315,10 @@ Use these checks as needed, without announcing them as onboarding:
    needed to resolve or correctly label it.
 5. Extract what can be confirmed without asking. Gather only the remaining
    search boundaries needed now using the native question flow below.
-6. Write confirmed evidence to `private/user-profile.md`, the search contract to
+6. After the guided intake batch is complete, write confirmed evidence to
+   `private/user-profile.md`, the search contract to
    `private/search-preferences.md`, and operational choices to
-   `private/user-preferences.yaml` as the conversation progresses.
+   `private/user-preferences.yaml` in one consolidated state update.
 7. Record meaningful state changes compactly in `private/logs/`.
 
 Onboarding is progressive, not a separate session or completion gate. Do not
@@ -258,15 +330,26 @@ merely because new profile information was saved.
 ## Native question flow and search handoff
 
 Use Codex's native structured question or user-input tool, such as
-`request_user_input`, whenever it is available. Ask one decision per tool call,
-even when the tool supports several questions. Provide two or three clear
-choices when the question has natural options, mark the sensible default when
-one exists, and retain a free-form path. If no native question tool is
-available, ask the same question as one short conversational sentence.
+`request_user_input`, whenever it is available. After the separate title-and-
+level confirmation, put all remaining missing boundary decisions into one
+structured input call whenever the tool supports it. Each question must still
+cover one decision and provide two or three clear choices, a sensible default
+when one exists, and a free-form path. The native UI may present those questions
+as successive cards, but they belong to one guided batch and should return
+together before candidate state is changed. If the tool limits the number of
+questions, use the fewest calls it permits and do not write private state between
+them. If no native question tool is available, ask one compact related group in
+plain conversation.
 
-Never show the user a large questionnaire or ask them to reply in shorthand.
-Skip anything already answered by the resume, current conversation, confirmed
-private state, or a reasonable non-blocking default.
+Never print a large questionnaire in the conversation or ask the user to reply
+in shorthand. Skip anything already answered by the resume, current
+conversation, confirmed private state, or a reasonable non-blocking default.
+Keep answers from the guided batch in working context until it is complete, then
+persist them once. Do not patch profile or preference files after each answer.
+Treat this persistence as quiet internal housekeeping: do not narrate filenames,
+diffs, patches, or implementation details. If a progress message is useful, say
+only that the search preferences are being prepared. The Codex host may still
+show its own generic file-edit activity; do not add more implementation noise.
 
 Before asking about location, compensation, or other boundaries, present a
 compact **Search direction** section derived from the resume. It must show:
@@ -284,11 +367,34 @@ Resolve that decision before continuing.
 
 Then progressively resolve only the remaining material boundaries:
 
-1. location and remote, hybrid, or onsite boundaries;
+1. search coverage, including geography, remote/hybrid/onsite arrangements, and
+   relocation;
 2. work authorization and sponsorship only where it affects eligibility;
 3. minimum compensation, including an explicit no-minimum option;
 4. full-time, contract, part-time, or flexible employment type;
 5. genuine dealbreakers not inferable from prior answers.
+
+Location is a combination, not a mutually exclusive choice. Never force the
+user to choose between U.S. remote work, roles in their current state, and
+relocation when more than one can apply. Unless the conversation already
+answers it, ask one native question: **“How broad should I make the location
+search?”** Use these presets:
+
+- `Broad U.S. search` — U.S.-remote roles, suitable roles in the user's current
+  state, and roles elsewhere in the United States when relocation is viable;
+- `U.S. remote only` — remote roles available to the user anywhere in the
+  United States, without assuming relocation;
+- `Current state only` — remote, hybrid, and onsite roles in the user's current
+  state, without expanding nationwide;
+- the native free-form path for a different combination.
+
+Present `Broad U.S. search` as the recommended option when the user's stated
+preferences do not narrow the search. Treat natural answers such as “all,”
+“all of them,” or “I am open to relocation too” as the broad preset. Store the
+result as separate geography, work-arrangement, and relocation fields so future
+searches can change one dimension without losing the others. Confirm the
+interpretation in one short sentence and continue; do not ask again in another
+form.
 
 Use the native question UI to confirm the target summary. Ask: “Does this search
 direction look right?” Offer `All good - begin search` as the recommended choice,
@@ -370,13 +476,30 @@ completed.
 ## Default parallel research orchestration
 
 Do not ask the user to choose a research mode or discuss token economics during
-normal use. Use a reasonable default fan-out of up to three internal research
-workers plus one coordinating agent, subject to the capabilities available in
-the current environment.
+normal use. Use dynamic parallelism with a default fan-out of up to seven
+internal research workers and a maximum burst of twelve, plus one coordinating
+agent. The coordinator is not counted as a search worker.
+
+The worker count is a ceiling, not a quota. Choose the actual fan-out from the
+number of genuinely distinct role-family, geography, and source partitions, the
+requested batch size, and the concurrency available in the current environment.
+Use roughly five to seven workers for the 15-role feedback batch, up to seven for
+an ordinary 30-role batch, and eight to twelve only for a broad search with
+enough independent lanes to justify the burst. If the host exposes fewer slots,
+use what is available and continue without making it a user-facing problem.
+
+Never create extra workers merely to reach the configured number. Each worker
+must have a non-overlapping assignment; repeated prompt context, duplicate
+discovery, and central synthesis are real costs even when work runs in parallel.
+The purpose of higher concurrency is lower wall-clock time and narrower worker
+context, not artificial search volume.
 
 Older private preference files may still contain `research_mode` or
 `ai_cost_sensitivity`; treat those legacy fields as inert. Do not ask the user
-to migrate or reconfirm them.
+to migrate or reconfirm them. An unconfirmed legacy `parallel_workers: 3` value
+is the former toolkit default, not a user preference: quietly upgrade it to
+seven and add the twelve-worker maximum. Preserve a lower value only when the
+user explicitly chose it as a resource limit.
 
 Web search is the default discovery method. Do not require job-board API keys,
 build dedicated ATS integrations, depend on undocumented endpoints, or create a
