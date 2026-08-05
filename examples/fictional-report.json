@@ -1,0 +1,245 @@
+{
+  "report": {
+    "id": "example-calibration-2026-08-05",
+    "kind": "calibration",
+    "title": "First calibration",
+    "summary": "Six fictional roles that demonstrate direct, adjacent, and boundary-case evidence without using a real candidate's information.",
+    "createdAt": "2026-08-05T18:00:00Z"
+  },
+  "jobs": [
+    {
+      "canonicalKey": "example:atlas:product-engineer",
+      "company": "Atlas Workshop",
+      "title": "Product Software Engineer",
+      "location": "Chicago, IL or Remote US",
+      "arrangement": "Remote or hybrid",
+      "salary": "$135k-$165k",
+      "applicationUrl": "https://example.com/jobs/atlas-product-engineer",
+      "source": "Fictional official careers page",
+      "liveVerifiedAt": "2026-08-05T17:40:00Z",
+      "rank": 1,
+      "fitClass": "A",
+      "score": 91,
+      "state": "ready",
+      "recommendation": "Strong product-engineering alignment with direct evidence for end-to-end TypeScript delivery, customer-facing ownership, and relational data work.",
+      "requirements": [
+        {
+          "requirement": "Own customer-facing features end to end",
+          "match": "Direct",
+          "evidence": "The fictional candidate led discovery, implementation, deployment, and maintenance for production web products.",
+          "source": "fictional resume"
+        },
+        {
+          "requirement": "Production TypeScript and Node.js",
+          "match": "Direct",
+          "evidence": "Multiple production services and applications used TypeScript and Node.js.",
+          "source": "fictional resume"
+        },
+        {
+          "requirement": "Relational data modeling",
+          "match": "Direct",
+          "evidence": "Designed PostgreSQL schemas and data-backed product workflows.",
+          "source": "fictional portfolio"
+        }
+      ],
+      "gaps": [],
+      "risks": ["The posting does not state how often the Chicago team meets in person."],
+      "companyPolicy": {
+        "summary": "The fictional employer asks candidates to keep no more than three active applications at once.",
+        "maximumApplications": 3,
+        "sourceUrl": "https://example.com/careers/policy",
+        "verifiedAt": "2026-08-05T17:42:00Z"
+      }
+    },
+    {
+      "canonicalKey": "example:northstar:full-stack",
+      "company": "Northstar Health",
+      "title": "Full-Stack Engineer",
+      "location": "United States",
+      "arrangement": "Remote",
+      "salary": "$145k-$180k",
+      "applicationUrl": "https://example.com/jobs/northstar-full-stack",
+      "source": "Fictional ATS",
+      "liveVerifiedAt": "2026-08-05T17:41:00Z",
+      "rank": 2,
+      "fitClass": "A",
+      "score": 88,
+      "state": "ready",
+      "recommendation": "Direct fit for a balanced product role involving APIs, workflow automation, authentication, and regulated customer data.",
+      "requirements": [
+        {
+          "requirement": "Build secure web applications",
+          "match": "Direct",
+          "evidence": "Delivered authenticated applications with role-based access and privacy-sensitive workflows.",
+          "source": "fictional resume"
+        },
+        {
+          "requirement": "Design backend APIs",
+          "match": "Direct",
+          "evidence": "Owned REST APIs and third-party integrations in production.",
+          "source": "fictional resume"
+        },
+        {
+          "requirement": "Healthcare-domain experience",
+          "match": "Adjacent",
+          "evidence": "Built privacy-sensitive scheduling software, but not in this employer's clinical specialty.",
+          "source": "fictional project"
+        }
+      ],
+      "gaps": ["No direct experience with the employer's clinical specialty."],
+      "risks": []
+    },
+    {
+      "canonicalKey": "example:ledgerlane:backend",
+      "company": "Ledger Lane",
+      "title": "Backend Product Engineer",
+      "location": "New York, NY",
+      "arrangement": "Hybrid",
+      "salary": "$155k-$190k",
+      "applicationUrl": "https://example.com/jobs/ledger-lane-backend",
+      "source": "Fictional official careers page",
+      "liveVerifiedAt": "2026-08-05T17:43:00Z",
+      "rank": 3,
+      "fitClass": "A",
+      "score": 84,
+      "state": "ready",
+      "recommendation": "Strong backend and data alignment; the main calibration question is whether weekly New York attendance is acceptable.",
+      "requirements": [
+        {
+          "requirement": "Node.js API ownership",
+          "match": "Direct",
+          "evidence": "Owned Node.js APIs from architecture through production maintenance.",
+          "source": "fictional resume"
+        },
+        {
+          "requirement": "PostgreSQL performance",
+          "match": "Direct",
+          "evidence": "Improved production queries and designed indexed relational schemas.",
+          "source": "fictional portfolio"
+        },
+        {
+          "requirement": "Payments or fintech workflows",
+          "match": "Direct",
+          "evidence": "Implemented billing, payment-provider integrations, and transaction history.",
+          "source": "fictional resume"
+        }
+      ],
+      "gaps": [],
+      "risks": ["The role requires weekly attendance in New York." ]
+    },
+    {
+      "canonicalKey": "example:brightfield:platform-product",
+      "company": "Brightfield Systems",
+      "title": "Software Engineer, Internal Tools",
+      "location": "Austin, TX",
+      "arrangement": "Hybrid",
+      "salary": "$125k-$155k",
+      "applicationUrl": "https://example.com/jobs/brightfield-internal-tools",
+      "source": "Fictional ATS",
+      "liveVerifiedAt": "2026-08-05T17:45:00Z",
+      "rank": 4,
+      "fitClass": "B",
+      "score": 79,
+      "state": "ready",
+      "recommendation": "Most daily product and workflow work is supported, with an adjacent gap around the employer's Python-heavy automation layer.",
+      "requirements": [
+        {
+          "requirement": "Build operational workflows",
+          "match": "Direct",
+          "evidence": "Created internal review, moderation, and publishing tools used in daily operations.",
+          "source": "fictional portfolio"
+        },
+        {
+          "requirement": "Partner with non-technical teams",
+          "match": "Direct",
+          "evidence": "Translated editorial and operations requirements into maintained software.",
+          "source": "fictional resume"
+        },
+        {
+          "requirement": "Production Python",
+          "match": "Adjacent",
+          "evidence": "Used Python for data processing, but the primary production stack was TypeScript.",
+          "source": "candidate-confirmed fictional fact"
+        }
+      ],
+      "gaps": ["Python is central to part of the automation layer."],
+      "risks": ["The exact split between application work and platform maintenance is unclear."]
+    },
+    {
+      "canonicalKey": "example:signalnest:growth",
+      "company": "Signal Nest",
+      "title": "Growth Engineer",
+      "location": "San Francisco, CA",
+      "arrangement": "On-site",
+      "salary": "$165k-$205k",
+      "applicationUrl": "https://example.com/jobs/signal-nest-growth",
+      "source": "Fictional official careers page",
+      "liveVerifiedAt": "2026-08-05T17:46:00Z",
+      "rank": 5,
+      "fitClass": "B",
+      "score": 75,
+      "state": "ready",
+      "recommendation": "The technical and product work transfers, but this is intentionally included to calibrate on-site relocation and experimentation-heavy scope.",
+      "requirements": [
+        {
+          "requirement": "Own activation and monetization experiments",
+          "match": "Adjacent",
+          "evidence": "Owned onboarding and paid-product workflows, but not a dedicated experimentation program.",
+          "source": "fictional resume"
+        },
+        {
+          "requirement": "Full-stack TypeScript",
+          "match": "Direct",
+          "evidence": "Built production TypeScript applications across client and server boundaries.",
+          "source": "fictional resume"
+        },
+        {
+          "requirement": "Move to San Francisco",
+          "match": "None",
+          "evidence": "Relocation preference has not been confirmed.",
+          "source": "open question"
+        }
+      ],
+      "gaps": ["No dedicated growth-experimentation ownership is documented."],
+      "risks": ["Requires relocation and full-time on-site work."]
+    },
+    {
+      "canonicalKey": "example:quarry:staff-platform",
+      "company": "Quarry Cloud",
+      "title": "Staff Platform Engineer",
+      "location": "United States",
+      "arrangement": "Remote",
+      "salary": "$190k-$235k",
+      "applicationUrl": "https://example.com/jobs/quarry-staff-platform",
+      "source": "Fictional ATS",
+      "liveVerifiedAt": "2026-08-05T17:48:00Z",
+      "rank": 6,
+      "fitClass": "C",
+      "score": 62,
+      "state": "ready",
+      "recommendation": "Boundary case for calibration only: general production ownership transfers, but staff-level platform scope is not directly established.",
+      "requirements": [
+        {
+          "requirement": "Set organization-wide platform strategy",
+          "match": "None",
+          "evidence": "The fictional evidence shows product architecture, not organization-wide platform leadership.",
+          "source": "fictional resume"
+        },
+        {
+          "requirement": "Operate Kubernetes infrastructure",
+          "match": "Adjacent",
+          "evidence": "Deployed containerized services but did not own a Kubernetes platform.",
+          "source": "fictional portfolio"
+        },
+        {
+          "requirement": "Production reliability ownership",
+          "match": "Direct",
+          "evidence": "Maintained and debugged production services with performance and reliability responsibility.",
+          "source": "fictional resume"
+        }
+      ],
+      "gaps": ["Staff platform leadership is not supported.", "Kubernetes platform ownership is absent."],
+      "risks": ["The role's identity is infrastructure rather than product engineering."]
+    }
+  ]
+}

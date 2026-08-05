@@ -1,0 +1,9 @@
+# Keep the private boundary visible while ignoring all candidate and local state.
+/private/*
+!/private/README.md
+
+# The root executable is always derived locally.
+/jobdeck
+/jobdeck.exe
+
+.DS_Store

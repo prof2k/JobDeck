@@ -1,0 +1,6 @@
+/node_modules/
+*.tsbuildinfo
+.vite/
+
+# dist is intentionally committed for server-only setup builds.
+!/dist/
