@@ -28,14 +28,14 @@ same single-marker replacement directly.
 
 The template chooses its interface from `report.kind`:
 
-- `calibration` shows optional per-job reaction flags and saves them with simple
-  browser storage when available;
-- every other kind is a quieter consumption-first search report without the
-  calibration form.
+- `calibration` labels the batch as feedback-oriented but remains a read-only
+  evidence report; the agent asks for the user's reaction in conversation;
+- every other kind is a consumption-first search report using the same reading
+  surface.
 
 Both modes are single-report pages with a ranked ledger and one selected-job
 evidence sheet. They require no localhost, database, IndexedDB, package install,
-external font, or framework runtime.
+external font, framework runtime, or marking and feedback controls.
 
 When the report's optional top-level `applicationHelper.show` value is `true`,
 the page also renders its configured Simplify Copilot recommendation and official

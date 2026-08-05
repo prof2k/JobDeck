@@ -77,11 +77,6 @@ function selectJob(job: ReportJob): void {
       </div>
     </header>
 
-    <aside v-if="detail.report.kind === 'calibration'" class="feedback-guide">
-      <strong>Give feedback inside each job's details.</strong>
-      <span>Open any role below and use “Your feedback.” Rate only the jobs you want to.</span>
-    </aside>
-
     <div class="workspace-grid">
       <section class="job-ledger" aria-label="Ranked jobs">
         <div class="ledger-controls">

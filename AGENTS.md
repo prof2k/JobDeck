@@ -281,8 +281,8 @@ Initialize operational preferences with this shallow YAML schema:
 version: 1
 last_updated: "YYYY-MM-DD"
 last_confirmed: null
-parallel_workers: 7
-maximum_parallel_workers: 12
+parallel_workers: 10
+maximum_parallel_workers: 15
 dynamic_parallelism: true
 prefer_batched_discovery: true
 stop_after_enough_verified_roles: true
@@ -488,38 +488,40 @@ official application or cited policy link.
 
 Standalone reports are always single-report pages rather than a report library:
 
-- A calibration report shows the ranked ledger, selected-job evidence, and
-  simple optional reaction flags inside each job detail.
+- A calibration report shows the ranked ledger and selected-job evidence, but
+  no marking, reaction, or feedback controls. Ask for feedback in conversation.
 - A normal search report uses the same split reading surface but is
-  consumption-first and omits calibration feedback controls.
+  consumption-first and also contains no feedback controls.
 - Initial Ready, Opened, Applied, and other states may be shown from the private
   ledger. The standalone page is not the authoritative application database.
-- Simple browser-local storage may retain calibration reactions when available,
-  but the page must still work without it and must never require IndexedDB.
+- Do not store reactions in browser storage. Standalone reports are reading
+  surfaces, not writable application-state tools.
 
 As soon as the verified batch is ready, create and persist the report, start the
 local runtime when usable or generate the standalone HTML otherwise, then open
 or attach the result when the environment permits. Do not pause for another
 command between completed research and report delivery. Say only that the
 report is ready; never announce the delivery mode. For the first feedback batch,
-tell the user in one sentence to open any job and use **Your feedback** inside
-that job's details. Feedback is optional: never require a verdict on every job
-or block later searches until every control is completed.
+ask one natural, open question such as: “Which roles stand out as good, wrong,
+or simply not interesting to you?” This conversational prompt is the primary
+calibration path for both dashboard and standalone reports. Do not direct the
+user to mark every job, require a verdict on each role, or block later searches
+until interface controls are completed.
 
 ## Default parallel research orchestration
 
 Do not ask the user to choose a research mode or discuss token economics during
-normal use. Use dynamic parallelism with a default fan-out of up to seven
-internal research workers and a maximum burst of twelve, plus one coordinating
-agent. The coordinator is not counted as a search worker.
+normal use. Use dynamic parallelism with a default fan-out of up to ten internal
+research workers and a maximum burst of fifteen, plus one coordinating agent.
+The coordinator is not counted as a search worker.
 
 The worker count is a ceiling, not a quota. Choose the actual fan-out from the
 number of genuinely distinct role-family, geography, and source partitions, the
 requested batch size, and the concurrency available in the current environment.
-Use roughly five to seven workers for the 15-role feedback batch, up to seven for
-an ordinary 30-role batch, and eight to twelve only for a broad search with
-enough independent lanes to justify the burst. If the host exposes fewer slots,
-use what is available and continue without making it a user-facing problem.
+Use roughly eight to ten workers for the 15-role feedback batch, up to ten for an
+ordinary 30-role batch, and eleven to fifteen only for a broad search with enough
+independent lanes to justify the burst. If the host exposes fewer slots, use
+what is available and continue without making it a user-facing problem.
 
 Never create extra workers merely to reach the configured number. Each worker
 must have a non-overlapping assignment; repeated prompt context, duplicate
@@ -529,10 +531,41 @@ context, not artificial search volume.
 
 Older private preference files may still contain `research_mode` or
 `ai_cost_sensitivity`; treat those legacy fields as inert. Do not ask the user
-to migrate or reconfirm them. An unconfirmed legacy `parallel_workers: 3` value
-is the former toolkit default, not a user preference: quietly upgrade it to
-seven and add the twelve-worker maximum. Preserve a lower value only when the
-user explicitly chose it as a resource limit.
+to migrate or reconfirm them. Unconfirmed `parallel_workers` values of three or
+seven are former toolkit defaults, not user preferences: quietly upgrade them
+to ten and set the maximum to fifteen. Preserve a lower value only when the user
+explicitly chose it as a resource limit.
+
+### Worker model and escalation policy
+
+When the host permits model selection, choose models dynamically from what is
+actually available. Discovery workers do not need a frontier model or extra-high
+reasoning by default.
+
+- Give ordinary discovery, source checking, and structured extraction to the
+  least expensive available model that can use the required web tools, follow
+  the shared brief, and return the required evidence fields reliably.
+- Prefer standard or modest reasoning for workers. Do not use extra-high,
+  maximum, or similarly costly reasoning merely because it is available.
+- Keep each worker's context narrow: one source family, role family, geography,
+  or verification assignment plus the compact search brief.
+- As soon as a worker finds a plausible live role, send a compact candidate
+  record to the coordinating agent instead of waiting for the entire worker lane
+  to finish. The worker may then continue its assigned search.
+- The coordinator owns canonical deduplication, hard gates, evidence conflicts,
+  fit class, ranking, and the final decision to include or exclude a role.
+- Escalate only the individual candidate or question that genuinely requires
+  stronger judgment. Do not rerun an entire lane or batch on a more expensive
+  model because one result is ambiguous.
+- If a cheaper worker repeatedly misses required fields or cannot verify
+  official pages reliably, move that specific assignment to the next capable
+  model tier. Capability and evidence quality remain hard requirements.
+- If the host does not expose model choice, use its available default silently
+  and retain the same narrow assignments and coordinator review.
+
+Optimize for three things together: low elapsed time, low unnecessary model
+cost, and trustworthy evidence. Never lower the verification or hard-gate
+standard merely to use a cheaper model.
 
 Web search is the default discovery method. Do not require job-board API keys,
 build dedicated ATS integrations, depend on undocumented endpoints, or create a
@@ -540,11 +573,11 @@ custom scraping system for ordinary searches.
 
 Give each worker a distinct web-search source family, role family, or geography
 assignment from the same reconciled brief. Launch independent discovery work
-together while the coordinating agent prepares the runtime, then centralize
-hard gates, canonical deduplication, official-page verification, evidence
-review, and final ranking. Never parallelize identical searches or expose
-internal worker threads to the user. If the user explicitly sets a
-system-resource limit, respect it.
+together while the coordinating agent prepares the runtime. Stream plausible
+candidates to the coordinator as they are found, then centralize hard gates,
+canonical deduplication, official-page verification, evidence review, and final
+ranking. Never parallelize identical searches or expose internal worker threads
+to the user. If the user explicitly sets a system-resource limit, respect it.
 
 ## Search and evaluation contract
 
@@ -575,6 +608,13 @@ authoritative; numerical score ranks only within a class.
 Read `standards/report.md` before generating or changing a report. Job Deck
 records explicit feedback; the server does not infer career preferences. Treat
 new feedback as pending agent work.
+
+Only calibration reports in the full local dashboard may expose feedback
+controls. Standard search reports never show them. Even during calibration,
+those controls are optional and self-discoverable; the agent should ask for the
+user's general reaction conversationally instead of instructing them to operate
+the controls. Standalone HTML reports never show feedback controls because they
+are not a dependable writable surface.
 
 The same evidence and state rules apply to dashboard and standalone reports.
 Never attach or link the internal JSON research artifact. When no dashboard is

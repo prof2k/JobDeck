@@ -515,23 +515,6 @@ h3 {
   padding-top: 10px;
 }
 
-.feedback-guide {
-  align-items: baseline;
-  background: var(--sheet);
-  border-radius: var(--radius-control);
-  color: var(--paper-secondary);
-  display: flex;
-  flex-wrap: wrap;
-  font-size: 0.78rem;
-  gap: 8px 12px;
-  margin-bottom: 16px;
-  padding: 12px 16px;
-}
-
-.feedback-guide strong {
-  color: var(--paper);
-}
-
 .workspace-grid {
   align-items: start;
   display: grid;

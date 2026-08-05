@@ -87,7 +87,8 @@ Applications remain manual. Opening an official application page means
 3. Confirm the titles, level, and boundaries Job Deck recommends.
 4. Job research and report preparation begin automatically and in parallel.
 5. Review 15 calibration roles in the local dashboard or standalone HTML report.
-6. Give feedback, apply manually, and continue with focused batches when ready.
+6. Tell Job Deck which roles stand out, apply manually, and continue with focused
+   batches when ready.
 
 ## Private by structure
 

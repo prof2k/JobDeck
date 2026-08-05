@@ -43,9 +43,12 @@ kind of job you want?” and provide Strong fit, Maybe, Wrong fit, and Never sho
 similar choices plus optional context. Make the section visually distinct with
 a slightly lighter surface rather than a stronger border.
 
-Feedback is optional. Tell the user where the controls are, invite feedback on
-the jobs that produce a clear reaction, and allow every role to be skipped
-without friction. Never require all jobs to be rated before another search.
+These controls appear only for calibration reports in the full local dashboard.
+Standard search reports never show them. They are optional and self-discoverable:
+do not direct the user to operate them or require all jobs to be rated before
+another search. The primary calibration prompt is conversational and broad:
+ask which roles stand out as good, wrong, or uninteresting and accept whatever
+level of detail the user naturally provides.
 
 The report page begins with a compact vertical trail: Reports, report type,
 title, and summary. Reports must sit above the batch label rather than beside it.
@@ -74,11 +77,10 @@ missing. Treat this as a normal delivery mode.
   install, external assets, a framework runtime, SQLite, or IndexedDB.
 - Preserve the ranked ledger and selected-job evidence layout. Stack it on
   smaller screens.
-- For calibration, show optional reaction flags inside each job detail. Simple
-  browser storage may remember those reactions, but the page must remain useful
-  if storage is unavailable.
-- For normal search reports, omit the calibration UI and optimize the page for
-  reading, comparison, and opening official application links.
+- Do not show marking, reaction, or feedback controls in any standalone report,
+  including calibration. Ask for calibration feedback in the conversation.
+- Optimize calibration and normal standalone reports for reading, comparison,
+  and opening official application links.
 - Show existing application states when supplied, but do not imply that a
   standalone page is the authoritative application ledger.
 - Keep all candidate-bearing HTML under `private/reports/`. Present the HTML

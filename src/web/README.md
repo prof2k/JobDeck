@@ -33,9 +33,9 @@ The split evidence desk is the signature. On desktop, ranked roles remain a
 compact, status-rich ledger on the left while the selected role occupies the
 larger evidence sheet on the right. Both panes share a fixed working height and
 scroll independently. The sheet contains requirement-level evidence, gaps,
-application state, and an unmistakable in-context feedback surface. On smaller
-screens the ledger stacks above the selected role, and the same sheet remains
-legible in an offline snapshot.
+application state, and calibration-only feedback controls that remain secondary
+to conversational feedback. On smaller screens the ledger stacks above the
+selected role, and the same sheet remains legible in an offline snapshot.
 
 ### Visual system
 
@@ -64,5 +64,5 @@ legible in an offline snapshot.
   and a purposeful split ledger-and-evidence workspace.
 - Avoid rainbow fit scores; use one violet accent plus semantic amber and green.
 - Avoid card-grid job browsing; use ranked rows so comparison remains fast.
-- Avoid a detached calibration form; ask for optional feedback inside the
-  selected job's detail, directly below the recommendation.
+- Avoid a detached calibration form. Keep optional controls inside calibration
+  job details only, without a report-wide prompt; standard reports have none.

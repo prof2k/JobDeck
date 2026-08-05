@@ -11,7 +11,6 @@
       --desk: #0f0f11;
       --sheet: #19191d;
       --raised: #202026;
-      --feedback-sheet: #24242a;
       --inset: #121216;
       --paper: #f0eff4;
       --paper-secondary: #c2c0c8;
@@ -133,7 +132,6 @@
       white-space: nowrap;
     }
 
-    .calibration-guide,
     .application-helper {
       align-items: center;
       background: var(--sheet);
@@ -147,7 +145,6 @@
       padding: 12px 16px;
     }
 
-    .calibration-guide strong,
     .application-helper strong {
       color: var(--paper);
     }
@@ -192,8 +189,7 @@
     }
 
     .ledger-controls input,
-    .ledger-controls select,
-    .feedback-field textarea {
+    .ledger-controls select {
       background: #111115;
       border: 1px solid var(--line);
       border-radius: var(--radius-control);
@@ -203,8 +199,7 @@
       width: 100%;
     }
 
-    .ledger-controls input::placeholder,
-    .feedback-field textarea::placeholder {
+    .ledger-controls input::placeholder {
       color: var(--paper-muted);
     }
 
@@ -429,68 +424,6 @@
       padding-left: 14px;
     }
 
-    .feedback-panel {
-      background: var(--feedback-sheet);
-      border-radius: var(--radius-panel);
-      margin-bottom: 30px;
-      padding: 20px;
-    }
-
-    .feedback-panel__heading {
-      align-items: start;
-      display: flex;
-      gap: 16px;
-      justify-content: space-between;
-    }
-
-    .feedback-panel h3 {
-      font-size: 1.15rem;
-      margin-bottom: 8px;
-    }
-
-    .feedback-panel p {
-      color: var(--paper-tertiary);
-      font-size: 0.75rem;
-      line-height: 1.5;
-    }
-
-    .feedback-flags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 16px 0;
-    }
-
-    .feedback-flags button {
-      background: var(--raised);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-control);
-      cursor: pointer;
-      font-size: 0.72rem;
-      padding: 8px 10px;
-    }
-
-    .feedback-flags button[aria-pressed="true"] {
-      background: var(--violet-quiet);
-      border-color: var(--violet);
-      color: var(--violet);
-    }
-
-    .feedback-field {
-      display: grid;
-      gap: 6px;
-    }
-
-    .feedback-field span {
-      color: var(--paper-tertiary);
-      font-size: 0.68rem;
-    }
-
-    .feedback-field textarea {
-      min-height: 74px;
-      resize: vertical;
-    }
-
     .evidence-heading {
       align-items: center;
       display: flex;
@@ -685,11 +618,6 @@
     </header>
 
     <aside id="application-helper" class="application-helper" hidden></aside>
-    <aside id="calibration-guide" class="calibration-guide" hidden>
-      <strong>Give feedback inside each job's details.</strong>
-      <span>Use the reaction flags only on jobs that give you a clear response.</span>
-    </aside>
-
     <section class="workspace" aria-label="Job report">
       <aside class="ledger" aria-label="Ranked jobs">
         <div class="ledger-controls">
@@ -720,7 +648,6 @@
       const report = reportData.report || {};
       const jobs = Array.isArray(reportData.jobs) ? reportData.jobs : [];
       const calibration = report.kind === 'calibration';
-      const storageKey = `jobdeck:standalone:${report.id || 'report'}:feedback`;
       const validStates = new Set([
         'ready',
         'opened',
@@ -730,12 +657,6 @@
         'rejected',
       ]);
       const validMatches = new Set(['direct', 'adjacent', 'none']);
-      const feedbackLabels = {
-        strong: 'Strong fit',
-        maybe: 'Maybe',
-        wrong: 'Wrong fit',
-        never: 'Never show similar',
-      };
       const escapeCharacters = {
         '&': '&amp;',
         '<': '&lt;',
@@ -745,7 +666,6 @@
       };
       const elements = {
         applicationHelper: document.querySelector('#application-helper'),
-        calibrationGuide: document.querySelector('#calibration-guide'),
         detail: document.querySelector('#job-detail'),
         jobList: document.querySelector('#job-list'),
         ledgerCount: document.querySelector('#ledger-count'),
@@ -795,34 +715,9 @@
         return validMatches.has(normalized) ? normalized : 'none';
       };
 
-      const loadFeedback = () => {
-        if (!calibration) return {};
-        try {
-          const value = window.localStorage.getItem(storageKey);
-          return value ? JSON.parse(value) : {};
-        } catch {
-          return {};
-        }
-      };
-
-      const feedback = loadFeedback();
       let selectedKey = jobs.length > 0 ? jobKey(jobs[0]) : '';
       let query = '';
       let stateFilter = 'all';
-
-      const saveFeedback = () => {
-        if (!calibration) return;
-        try {
-          window.localStorage.setItem(storageKey, JSON.stringify(feedback));
-        } catch {
-          // The report remains fully usable when browser storage is unavailable.
-        }
-      };
-
-      const feedbackFor = (job) => feedback[jobKey(job)] || {
-        verdict: '',
-        note: '',
-      };
 
       const filteredJobs = () => jobs.filter((job) => {
         const searchable = `${job.company || ''} ${job.title || ''} ${job.location || ''}`
@@ -852,7 +747,6 @@
         elements.reportTitle.textContent = report.title || 'Job search report';
         elements.reportSummary.textContent = report.summary || '';
         elements.reportCount.textContent = `${jobs.length} ${jobs.length === 1 ? 'role' : 'roles'}`;
-        elements.calibrationGuide.hidden = !calibration;
         document.title = `${report.title || 'Job search report'} · Job Deck`;
         renderApplicationHelper();
       };
@@ -893,39 +787,6 @@
             </li>
           `;
         }).join('');
-      };
-
-      const renderFeedback = (job) => {
-        if (!calibration) return '';
-        const current = feedbackFor(job);
-        return `
-          <section class="feedback-panel" aria-label="Is this the kind of job you want?">
-            <div class="feedback-panel__heading">
-              <div>
-                <p class="section-label">Your feedback</p>
-                <h3>Is this the kind of job you want?</h3>
-              </div>
-              <span class="badge">Optional</span>
-            </div>
-            <p>Choose a reaction only when the role gives you a clear response.</p>
-            <div class="feedback-flags" role="group" aria-label="Job fit feedback">
-              ${Object.entries(feedbackLabels).map(([value, label]) => `
-                <button
-                  type="button"
-                  data-feedback="${value}"
-                  aria-pressed="${current.verdict === value}"
-                >${escapeHtml(label)}</button>
-              `).join('')}
-            </div>
-            <label class="feedback-field">
-              <span>Optional context</span>
-              <textarea
-                data-feedback-note
-                placeholder="Title, level, location, salary, scope…"
-              >${escapeHtml(current.note)}</textarea>
-            </label>
-          </section>
-        `;
       };
 
       const renderTextList = (title, values) => {
@@ -1000,8 +861,6 @@
               <p>${escapeHtml(selectedJob.recommendation || 'Review the evidence below before applying.')}</p>
             </section>
 
-            ${renderFeedback(selectedJob)}
-
             <section>
               <div class="evidence-heading">
                 <h3>Requirement evidence</h3>
@@ -1029,7 +888,7 @@
             ${renderPolicy(selectedJob.companyPolicy)}
           </div>
           <footer class="detail-actions">
-            <span>${calibration ? 'Feedback is optional.' : 'Review the evidence before applying.'}</span>
+            <span>Review the evidence before applying.</span>
             ${applicationUrl ? `
               <a
                 class="button"
@@ -1062,31 +921,6 @@
       elements.stateFilter.addEventListener('change', (event) => {
         stateFilter = event.target.value;
         renderList();
-      });
-
-      elements.detail.addEventListener('click', (event) => {
-        const flag = event.target.closest('[data-feedback]');
-        if (!flag || !calibration) return;
-        const selectedJob = jobs.find((job) => jobKey(job) === selectedKey);
-        if (!selectedJob) return;
-        const current = feedbackFor(selectedJob);
-        feedback[selectedKey] = {
-          ...current,
-          verdict: current.verdict === flag.dataset.feedback ? '' : flag.dataset.feedback,
-        };
-        saveFeedback();
-        renderDetail();
-      });
-
-      elements.detail.addEventListener('input', (event) => {
-        if (!event.target.matches('[data-feedback-note]') || !calibration) return;
-        const selectedJob = jobs.find((job) => jobKey(job) === selectedKey);
-        if (!selectedJob) return;
-        feedback[selectedKey] = {
-          ...feedbackFor(selectedJob),
-          note: event.target.value,
-        };
-        saveFeedback();
       });
 
       renderHeader();
