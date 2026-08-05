@@ -8,11 +8,12 @@ type batch struct {
 }
 
 type batchReport struct {
-	ID        string `json:"id"`
-	Kind      string `json:"kind"`
-	Title     string `json:"title"`
-	Summary   string `json:"summary"`
-	CreatedAt string `json:"createdAt"`
+	ID             string `json:"id"`
+	Kind           string `json:"kind"`
+	Title          string `json:"title"`
+	Summary        string `json:"summary"`
+	CreatedAt      string `json:"createdAt"`
+	RequestedCount int    `json:"requestedCount"`
 }
 
 type batchJob struct {

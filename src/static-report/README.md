@@ -33,6 +33,10 @@ The template chooses its interface from `report.kind`:
 - every other kind is a consumption-first search report using the same reading
   surface.
 
+Every source artifact must include a positive integer `report.requestedCount`.
+The renderer refuses to create a standalone report unless the jobs array has
+exactly that many entries. Partial search checkpoints are not reports.
+
 Both modes are single-report pages with a ranked ledger and one selected-job
 evidence sheet. They require no localhost, database, IndexedDB, package install,
 external font, framework runtime, or marking and feedback controls.

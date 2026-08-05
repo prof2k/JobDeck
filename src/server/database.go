@@ -231,8 +231,21 @@ func validateBatch(artifact batch) error {
 	if _, err := time.Parse(time.RFC3339, artifact.Report.CreatedAt); err != nil {
 		return errors.New("report createdAt must be RFC3339")
 	}
+	if artifact.Report.RequestedCount < 1 {
+		return errors.New("report requestedCount must be a positive integer")
+	}
+	if artifact.Report.Kind == "calibration" && artifact.Report.RequestedCount != 15 {
+		return errors.New("calibration reports require exactly 15 jobs")
+	}
 	if len(artifact.Jobs) == 0 {
 		return errors.New("at least one job is required")
+	}
+	if len(artifact.Jobs) != artifact.Report.RequestedCount {
+		return fmt.Errorf(
+			"report requires exactly %d jobs, got %d; partial batches cannot be imported",
+			artifact.Report.RequestedCount,
+			len(artifact.Jobs),
+		)
 	}
 
 	ranks := make(map[int]struct{}, len(artifact.Jobs))

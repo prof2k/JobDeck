@@ -3,8 +3,9 @@
     "id": "example-calibration-2026-08-05",
     "kind": "calibration",
     "title": "First calibration",
-    "summary": "Six fictional roles that demonstrate direct, adjacent, and boundary-case evidence without using a real candidate's information.",
-    "createdAt": "2026-08-05T18:00:00Z"
+    "summary": "Fifteen fictional roles that demonstrate direct, adjacent, and boundary-case evidence without using a real candidate's information.",
+    "createdAt": "2026-08-05T18:00:00Z",
+    "requestedCount": 15
   },
   "applicationHelper": {
     "show": true,
@@ -247,6 +248,240 @@
       ],
       "gaps": ["Staff platform leadership is not supported.", "Kubernetes platform ownership is absent."],
       "risks": ["The role's identity is infrastructure rather than product engineering."]
+    },
+    {
+      "canonicalKey": "example:harbor:product-engineer",
+      "company": "Harbor Works",
+      "title": "Product Engineer",
+      "location": "United States",
+      "arrangement": "Remote",
+      "salary": "$140k-$170k",
+      "applicationUrl": "https://example.com/jobs/harbor-product-engineer",
+      "source": "Fictional official careers page",
+      "liveVerifiedAt": "2026-08-05T17:49:00Z",
+      "rank": 7,
+      "fitClass": "A",
+      "score": 86,
+      "state": "opened",
+      "recommendation": "Strong product ownership and TypeScript alignment with a manageable analytics-learning curve.",
+      "requirements": [
+        {
+          "requirement": "Ship product workflows across frontend and backend",
+          "match": "Direct",
+          "evidence": "The fictional candidate owns customer-facing workflows across both layers.",
+          "source": "fictional resume"
+        }
+      ],
+      "gaps": ["No direct product-analytics platform ownership is documented."],
+      "risks": []
+    },
+    {
+      "canonicalKey": "example:mapleline:full-stack",
+      "company": "Maple Line",
+      "title": "Senior Full-Stack Engineer",
+      "location": "Denver, CO",
+      "arrangement": "Hybrid",
+      "salary": "$150k-$185k",
+      "applicationUrl": "https://example.com/jobs/mapleline-full-stack",
+      "source": "Fictional ATS",
+      "liveVerifiedAt": "2026-08-05T17:50:00Z",
+      "rank": 8,
+      "fitClass": "A",
+      "score": 83,
+      "state": "ready",
+      "recommendation": "Good full-stack scope with a useful calibration question around relocation to Denver.",
+      "requirements": [
+        {
+          "requirement": "Production Vue and Node.js",
+          "match": "Direct",
+          "evidence": "The fictional candidate has shipped and maintained both in production.",
+          "source": "fictional resume"
+        }
+      ],
+      "gaps": [],
+      "risks": ["The team meets in Denver twice each week."]
+    },
+    {
+      "canonicalKey": "example:wellframe:workflow",
+      "company": "Wellframe Labs",
+      "title": "Software Engineer, Workflows",
+      "location": "United States",
+      "arrangement": "Remote",
+      "salary": "$130k-$165k",
+      "applicationUrl": "https://example.com/jobs/wellframe-workflows",
+      "source": "Fictional official careers page",
+      "liveVerifiedAt": "2026-08-05T17:51:00Z",
+      "rank": 9,
+      "fitClass": "A",
+      "score": 82,
+      "state": "applied",
+      "recommendation": "Direct workflow, healthcare, and API alignment with a reasonable domain-learning requirement.",
+      "requirements": [
+        {
+          "requirement": "Build privacy-sensitive workflow software",
+          "match": "Direct",
+          "evidence": "The fictional evidence includes authenticated and privacy-sensitive products.",
+          "source": "fictional resume"
+        }
+      ],
+      "gaps": ["The employer's claims-processing domain is new."],
+      "risks": []
+    },
+    {
+      "canonicalKey": "example:pinecone:commerce",
+      "company": "Pinecone Market",
+      "title": "Commerce Platform Engineer",
+      "location": "Boston, MA",
+      "arrangement": "Remote or hybrid",
+      "salary": "$145k-$178k",
+      "applicationUrl": "https://example.com/jobs/pinecone-commerce",
+      "source": "Fictional ATS",
+      "liveVerifiedAt": "2026-08-05T17:52:00Z",
+      "rank": 10,
+      "fitClass": "A",
+      "score": 81,
+      "state": "ready",
+      "recommendation": "Payments, storefront, and product-platform evidence transfer directly to this role.",
+      "requirements": [
+        {
+          "requirement": "Own checkout and payment integrations",
+          "match": "Direct",
+          "evidence": "The fictional candidate has built payment-backed commerce workflows.",
+          "source": "fictional portfolio"
+        }
+      ],
+      "gaps": [],
+      "risks": []
+    },
+    {
+      "canonicalKey": "example:clearpath:search",
+      "company": "Clearpath Data",
+      "title": "Search Product Engineer",
+      "location": "Seattle, WA",
+      "arrangement": "Remote",
+      "salary": "$155k-$195k",
+      "applicationUrl": "https://example.com/jobs/clearpath-search",
+      "source": "Fictional official careers page",
+      "liveVerifiedAt": "2026-08-05T17:53:00Z",
+      "rank": 11,
+      "fitClass": "A",
+      "score": 87,
+      "state": "ready",
+      "recommendation": "Search relevance, database optimization, and end-to-end product evidence make this a strong match.",
+      "requirements": [
+        {
+          "requirement": "Improve search relevance and latency",
+          "match": "Direct",
+          "evidence": "The fictional candidate optimized production search and relational queries.",
+          "source": "fictional resume"
+        }
+      ],
+      "gaps": [],
+      "risks": ["The role may include periodic support rotation."]
+    },
+    {
+      "canonicalKey": "example:relay:integrations",
+      "company": "Relay Office",
+      "title": "Integrations Engineer",
+      "location": "United States",
+      "arrangement": "Remote",
+      "salary": "$135k-$168k",
+      "applicationUrl": "https://example.com/jobs/relay-integrations",
+      "source": "Fictional ATS",
+      "liveVerifiedAt": "2026-08-05T17:54:00Z",
+      "rank": 12,
+      "fitClass": "B",
+      "score": 77,
+      "state": "ready",
+      "recommendation": "Direct API-integration experience applies, though the role is less product-facing than the primary target.",
+      "requirements": [
+        {
+          "requirement": "Build and maintain third-party integrations",
+          "match": "Direct",
+          "evidence": "The fictional candidate owns multiple production integrations.",
+          "source": "fictional resume"
+        }
+      ],
+      "gaps": ["The role has limited interface and product-discovery work."],
+      "risks": []
+    },
+    {
+      "canonicalKey": "example:orchard:publishing",
+      "company": "Orchard Press",
+      "title": "Publishing Platform Engineer",
+      "location": "Chicago, IL",
+      "arrangement": "Hybrid",
+      "salary": "$125k-$158k",
+      "applicationUrl": "https://example.com/jobs/orchard-publishing",
+      "source": "Fictional official careers page",
+      "liveVerifiedAt": "2026-08-05T17:55:00Z",
+      "rank": 13,
+      "fitClass": "A",
+      "score": 85,
+      "state": "ready",
+      "recommendation": "Publishing systems, content migration, and product operations are all directly supported.",
+      "requirements": [
+        {
+          "requirement": "Modernize structured publishing workflows",
+          "match": "Direct",
+          "evidence": "The fictional portfolio includes schema-driven content and migration tooling.",
+          "source": "fictional portfolio"
+        }
+      ],
+      "gaps": [],
+      "risks": ["The role requires one office day each week."]
+    },
+    {
+      "canonicalKey": "example:riverbank:services",
+      "company": "Riverbank Systems",
+      "title": "Backend Engineer, Product Services",
+      "location": "Atlanta, GA",
+      "arrangement": "Remote",
+      "salary": "$148k-$182k",
+      "applicationUrl": "https://example.com/jobs/riverbank-services",
+      "source": "Fictional ATS",
+      "liveVerifiedAt": "2026-08-05T17:56:00Z",
+      "rank": 14,
+      "fitClass": "B",
+      "score": 78,
+      "state": "ready",
+      "recommendation": "Strong API and relational-data fit with a moderate gap around the team's Go-heavy services.",
+      "requirements": [
+        {
+          "requirement": "Design reliable product APIs",
+          "match": "Direct",
+          "evidence": "The fictional candidate has owned authenticated production APIs.",
+          "source": "fictional resume"
+        }
+      ],
+      "gaps": ["Go is the team's primary implementation language."],
+      "risks": []
+    },
+    {
+      "canonicalKey": "example:fieldnote:mobile",
+      "company": "Fieldnote Learning",
+      "title": "Cross-Platform Product Engineer",
+      "location": "United States",
+      "arrangement": "Remote",
+      "salary": "$132k-$164k",
+      "applicationUrl": "https://example.com/jobs/fieldnote-mobile",
+      "source": "Fictional official careers page",
+      "liveVerifiedAt": "2026-08-05T17:57:00Z",
+      "rank": 15,
+      "fitClass": "B",
+      "score": 76,
+      "state": "ready",
+      "recommendation": "Product and offline-workflow experience transfers, with mobile depth as the main calibration question.",
+      "requirements": [
+        {
+          "requirement": "Build offline-capable cross-platform experiences",
+          "match": "Adjacent",
+          "evidence": "The fictional portfolio includes offline-first product experiments.",
+          "source": "fictional project"
+        }
+      ],
+      "gaps": ["Most production experience is web rather than mobile."],
+      "risks": []
     }
   ]
 }

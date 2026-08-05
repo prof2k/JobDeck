@@ -20,11 +20,12 @@ func TestImportIsIdempotentAndPreservesProgress(t *testing.T) {
 	score := 88
 	artifact := batch{
 		Report: batchReport{
-			ID:        "calibration-1",
-			Kind:      "calibration",
-			Title:     "Calibration",
-			Summary:   "Test batch",
-			CreatedAt: time.Now().UTC().Format(time.RFC3339),
+			ID:             "calibration-1",
+			Kind:           "search",
+			Title:          "Calibration",
+			Summary:        "Test batch",
+			CreatedAt:      time.Now().UTC().Format(time.RFC3339),
+			RequestedCount: 1,
 		},
 		Jobs: []batchJob{{
 			CanonicalKey:   "greenhouse:123",
@@ -172,14 +173,45 @@ func TestFeedbackRoundTrip(t *testing.T) {
 	}
 }
 
+func TestValidateBatchRequiresExactRequestedCount(t *testing.T) {
+	artifact := testBatch()
+	artifact.Report.RequestedCount = 2
+
+	err := validateBatch(artifact)
+	if err == nil || !strings.Contains(err.Error(), "requires exactly 2 jobs, got 1") {
+		t.Fatalf("expected exact-count validation error, got %v", err)
+	}
+}
+
+func TestValidateBatchRequiresPositiveRequestedCount(t *testing.T) {
+	artifact := testBatch()
+	artifact.Report.RequestedCount = 0
+
+	err := validateBatch(artifact)
+	if err == nil || !strings.Contains(err.Error(), "requestedCount must be a positive integer") {
+		t.Fatalf("expected requested-count validation error, got %v", err)
+	}
+}
+
+func TestValidateBatchRequiresFifteenRoleCalibration(t *testing.T) {
+	artifact := testBatch()
+	artifact.Report.Kind = "calibration"
+
+	err := validateBatch(artifact)
+	if err == nil || !strings.Contains(err.Error(), "calibration reports require exactly 15 jobs") {
+		t.Fatalf("expected calibration-count validation error, got %v", err)
+	}
+}
+
 func testBatch() batch {
 	score := 70
 	return batch{
 		Report: batchReport{
-			ID:        "test-report",
-			Kind:      "calibration",
-			Title:     "Test report",
-			CreatedAt: time.Now().UTC().Format(time.RFC3339),
+			ID:             "test-report",
+			Kind:           "search",
+			Title:          "Test report",
+			CreatedAt:      time.Now().UTC().Format(time.RFC3339),
+			RequestedCount: 1,
 		},
 		Jobs: []batchJob{{
 			Company:        "Example",

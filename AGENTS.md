@@ -128,6 +128,13 @@ Never declare a named initialization stage finished, tell the user what command
 to say next, or stop between calibration and search after the target summary is
 confirmed.
 
+The first report is an exact 15-role calibration batch. When the user accepts
+that direction with language such as “all good,” “move on,” or “run the full
+batch,” immediately begin an exact 50-role batch of additional, non-duplicate
+jobs unless the user supplies another number. Do not ask how many jobs they want
+when the default applies; batch size remains naturally overridable in any later
+request.
+
 “Improve my resume” enters the active resume-improvement workflow: inspect the
 maintained resume comprehensively, ask necessary evidence questions, and propose
 or produce truthful revisions under the resume standard. Asking to view an
@@ -285,9 +292,10 @@ parallel_workers: 10
 maximum_parallel_workers: 15
 dynamic_parallelism: true
 prefer_batched_discovery: true
-stop_after_enough_verified_roles: true
+require_exact_batch_size: true
+stop_after_requested_verified_roles: true
 calibration_batch_size: 15
-later_batch_size: 30
+later_batch_size: 50
 open_dashboard_when_report_ready: true
 keep_last_report_offline: true
 standalone_report_when_runtime_unavailable: true
@@ -519,7 +527,7 @@ The worker count is a ceiling, not a quota. Choose the actual fan-out from the
 number of genuinely distinct role-family, geography, and source partitions, the
 requested batch size, and the concurrency available in the current environment.
 Use roughly eight to ten workers for the 15-role feedback batch, up to ten for an
-ordinary 30-role batch, and eleven to fifteen only for a broad search with enough
+ordinary 50-role batch, and eleven to fifteen only for a broad search with enough
 independent lanes to justify the burst. If the host exposes fewer slots, use
 what is available and continue without making it a user-facing problem.
 
@@ -535,6 +543,12 @@ to migrate or reconfirm them. Unconfirmed `parallel_workers` values of three or
 seven are former toolkit defaults, not user preferences: quietly upgrade them
 to ten and set the maximum to fifteen. Preserve a lower value only when the user
 explicitly chose it as a resource limit.
+
+Treat `stop_after_enough_verified_roles` and an unconfirmed
+`later_batch_size: 30` as former toolkit defaults. Replace them with
+`require_exact_batch_size: true`, `stop_after_requested_verified_roles: true`,
+and `later_batch_size: 50`. Preserve another batch size only when the user
+explicitly chose it.
 
 ### Worker model and escalation policy
 
@@ -581,12 +595,29 @@ to the user. If the user explicitly sets a system-resource limit, respect it.
 
 ## Search and evaluation contract
 
-- Use 15 verified roles for the first calibration batch.
-- Default later batches to 30 unless the user chooses another size.
+- Use exactly 15 verified roles for the first calibration batch. Fifteen is a
+  completion requirement, not an aspirational target.
+- Default every later batch to exactly 50 additional, non-duplicate verified
+  roles unless the user chooses another size. A user-supplied number becomes the
+  exact completion requirement for that batch.
+- Copy the required count into the pre-search brief before discovery begins and
+  into `report.requestedCount` without revising it downward later.
+- Count only final roles that survive every hard gate, are live on an official
+  employer or ATS application page, and do not appear in any earlier report.
+  Previously reported roles, rejected candidates, closed pages, attempted
+  searches, and duplicate discoveries never count toward a new batch.
+- Continue through additional non-overlapping discovery and verification waves
+  until the exact accepted-role count is reached. Quality gates remain fixed;
+  broaden discovery sources rather than weakening eligibility or evidence.
+- `stop_after_requested_verified_roles` means stop when the exact count is
+  reached. It never authorizes an early stop because a smaller set looks strong.
+- Never call a smaller result a full, final, complete, or ready batch, and never
+  render or import it as a completed report. If a host limit interrupts work,
+  persist an `X/N` checkpoint and resume toward the unchanged target; only the
+  user may cancel the batch or reduce its count.
 - The first batch should test plausible preference boundaries without including
   obviously ineligible jobs merely for variety.
 - Search effort may cover hundreds of candidates; output only roles that survive.
-- Return fewer roles rather than weakening a hard gate to fill a quota.
 - Apply level, language, frontend/framework dependence, domain, authorization,
   location, and evidence gates before scoring.
 - Use web search across search engines, employer career sites, aggregators, and
@@ -608,6 +639,11 @@ authoritative; numerical score ranks only within a class.
 Read `standards/report.md` before generating or changing a report. Job Deck
 records explicit feedback; the server does not infer career preferences. Treat
 new feedback as pending agent work.
+
+Every structured report must include the unchanged positive integer
+`report.requestedCount`. Dashboard import and standalone rendering must reject
+the artifact unless the number of jobs equals that count. Partial checkpoints
+belong in the private agent workspace, not in the report library.
 
 Only calibration reports in the full local dashboard may expose feedback
 controls. Standard search reports never show them. Even during calibration,

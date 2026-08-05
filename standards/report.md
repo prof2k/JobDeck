@@ -14,6 +14,20 @@ where the user reviews and acts on the result.
 This standard evolves when a reusable report or interaction rule improves.
 Candidate-specific display preferences remain under `private/`.
 
+## Batch completeness
+
+Every structured report declares a positive integer `report.requestedCount`.
+The number of included jobs must equal it exactly before the report is complete.
+The first calibration report requires 15 verified roles. Later reports require
+50 additional, non-duplicate verified roles by default, or the exact number the
+user requested.
+
+Never reduce `requestedCount` to match a partial search. Rejected, closed,
+duplicate, previously reported, or merely discovered jobs do not count. Continue
+searching without weakening hard gates. An interrupted `X/N` result is a private
+checkpoint, not a report, and must not appear in the dashboard library or be
+rendered as standalone HTML.
+
 ## Report library
 
 Show report title, calibration or full-search type, creation time, last-opened
@@ -70,7 +84,8 @@ Use a standalone HTML report whenever the current environment cannot run and
 open the local dashboard, regardless of which runtime or host capability is
 missing. Treat this as a normal delivery mode.
 
-- Produce one self-contained `.html` file per completed batch.
+- Produce one self-contained `.html` file per completed batch. Reject rendering
+  when `jobs.length` does not equal `report.requestedCount`.
 - Embed the private structured report data safely inside the HTML. Never expose,
   attach, or require the user to open a JSON file.
 - Do not fetch a sibling data file and do not require localhost, a package

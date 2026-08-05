@@ -69,7 +69,8 @@ its own confirmed state for later Job Deck sessions.
 - Learns role, level, geography, work arrangement, relocation, compensation,
   authorization, and other preference boundaries without treating compatible
   location choices as mutually exclusive.
-- Produces a 15-role calibration report before larger searches.
+- Produces exactly 15 verified calibration roles before moving to exact batches
+  of 50 additional roles by default; any number the user requests overrides 50.
 - Searches the web through dynamically parallel, non-overlapping research lanes
   while reporting only roles that survive the user's hard gates and remain live
   on an official application page.
@@ -86,9 +87,10 @@ Applications remain manual. Opening an official application page means
 2. Answer only the missing search decisions in a short guided batch.
 3. Confirm the titles, level, and boundaries Job Deck recommends.
 4. Job research and report preparation begin automatically and in parallel.
-5. Review 15 calibration roles in the local dashboard or standalone HTML report.
-6. Tell Job Deck which roles stand out, apply manually, and continue with focused
-   batches when ready.
+5. Review exactly 15 calibration roles in the local dashboard or standalone HTML
+   report.
+6. Tell Job Deck which roles stand out. The next search automatically produces
+   exactly 50 additional verified roles unless you request another number.
 
 ## Private by structure
 

@@ -31,6 +31,23 @@ if (
   throw new Error('Report data must contain a report object and jobs array.');
 }
 
+const { requestedCount } = reportData.report;
+
+if (!Number.isInteger(requestedCount) || requestedCount < 1) {
+  throw new Error('Report requestedCount must be a positive integer.');
+}
+
+if (reportData.report.kind === 'calibration' && requestedCount !== 15) {
+  throw new Error('Calibration reports require exactly 15 jobs.');
+}
+
+if (reportData.jobs.length !== requestedCount) {
+  throw new Error(
+    `Report requires exactly ${requestedCount} jobs, got ${reportData.jobs.length}; `
+      + 'partial batches cannot be rendered.',
+  );
+}
+
 if (!template.includes(marker)) {
   throw new Error('Standalone report template is missing its data marker.');
 }
