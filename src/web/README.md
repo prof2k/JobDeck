@@ -29,10 +29,10 @@ support serious comparison and quiet enough that evidence leads.
 The domain is search batches, shortlists, evidence, constraints, freshness,
 application history, progress stamps, and calibration corrections.
 
-The persistent evidence rail is the signature. Ranked roles remain a compact
-ledger on the left; the selected role expands into requirement-level evidence,
-gaps, and action state on the right. The same rail remains legible in an offline
-snapshot.
+The wide evidence sheet is the signature. Ranked roles remain a compact ledger;
+the selected role expands below it into requirement-level evidence, gaps,
+application state, and an unmistakable in-context feedback surface. The same
+sheet remains legible in an offline snapshot.
 
 ### Visual system
 
@@ -42,7 +42,8 @@ snapshot.
 - Violet highlighter: selection and primary action.
 - Amber note: uncertainty, adjacency, and stale data.
 - Green stamp: explicit completion.
-- Depth: borders and quiet surface shifts only; no decorative shadows.
+- Depth: quiet surface shifts lead; reserve borders for controls and necessary
+  separators, with no decorative shadows.
 - Surfaces: desk `#0f0f11`, sheet `#19191d`, raised `#202026`, inset `#121216`.
 - Text: paper `#f0eff4`, secondary `#c2c0c8`, tertiary `#96949e`, muted
   `#6f6d77`.
@@ -57,6 +58,8 @@ snapshot.
 ### Rejected defaults
 
 - Replace a generic sidebar plus detached dashboard cards with a report shelf
-  and evidence-first workspace.
+  and a wide, stacked evidence-first workspace.
 - Avoid rainbow fit scores; use one violet accent plus semantic amber and green.
 - Avoid card-grid job browsing; use ranked rows so comparison remains fast.
+- Avoid a detached calibration form; ask for optional feedback inside the
+  selected job's detail, directly below the recommendation.

@@ -51,8 +51,8 @@ cd ../..
 ./src/scripts/build-server.sh
 ```
 
-Do not commit `node_modules`. Do commit `src/web/dist/` and `bun.lock` so setup
-does not require a frontend toolchain.
+Do not commit `node_modules`. Do commit `src/web/dist/` and `bun.lock` so normal
+use does not require a frontend toolchain.
 
 ## Runtime paths
 

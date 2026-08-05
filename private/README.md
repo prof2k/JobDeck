@@ -6,7 +6,7 @@ tracked. Everything else under `private/` must remain ignored.
 
 - `user-profile.md` — verified resume and career evidence.
 - `search-preferences.md` — desired roles, constraints, and calibration lessons.
-- `user-preferences.yaml` — cost, parallelism, report, and interaction settings.
+- `user-preferences.yaml` — parallelism, report, and interaction settings.
 - `resume/original/` — the unchanged source resume.
 - `reports/` — generated report artifacts and research manifests.
 - `logs/` — append-only events and a compact readable activity log.

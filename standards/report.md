@@ -33,6 +33,21 @@ selected job must show:
 
 Opening the official page changes the state to `Opened`, never `Applied`.
 
+For the first feedback batch, place **Your feedback** directly inside each
+selected job's detail, immediately after the recommendation. Ask “Is this the
+kind of job you want?” and provide Strong fit, Maybe, Wrong fit, and Never show
+similar choices plus optional context. Make the section visually distinct with
+a slightly lighter surface rather than a stronger border.
+
+Feedback is optional. Tell the user where the controls are, invite feedback on
+the jobs that produce a clear reaction, and allow every role to be skipped
+without friction. Never require all jobs to be rated before another search.
+
+The report page begins with a compact vertical trail: Reports, report type,
+title, and summary. Reports must sit above the batch label rather than beside it.
+The selected-job surface should occupy roughly 90% of the viewport width on
+desktop, remain internally scrollable, and keep application actions pinned.
+
 ## Offline behavior
 
 Cache the application shell and last successfully loaded report snapshots. When

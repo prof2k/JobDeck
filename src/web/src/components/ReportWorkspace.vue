@@ -29,6 +29,10 @@ const selectedJobId = ref<number>(props.detail.jobs[0]?.id ?? 0);
 const query = ref('');
 const stateFilter = ref('all');
 
+const reportKindLabel = computed(() => (
+  props.detail.report.kind === 'calibration' ? 'Feedback batch' : 'Search report'
+));
+
 watch(
   () => props.detail.report.id,
   () => {
@@ -61,10 +65,10 @@ function selectJob(job: ReportJob): void {
   <main class="report-workspace">
     <header class="workspace-heading">
       <button class="back-button" type="button" @click="emit('back')">← Reports</button>
-      <div>
+      <div class="workspace-heading__content">
         <div class="workspace-heading__title">
           <div>
-            <p class="eyebrow">{{ detail.report.kind }} batch</p>
+            <p class="eyebrow">{{ reportKindLabel }}</p>
             <h1>{{ detail.report.title }}</h1>
           </div>
           <span v-if="saving" class="saving-note" role="status">Saving…</span>
@@ -72,6 +76,11 @@ function selectJob(job: ReportJob): void {
         <p>{{ detail.report.summary }}</p>
       </div>
     </header>
+
+    <aside v-if="detail.report.kind === 'calibration'" class="feedback-guide">
+      <strong>Give feedback inside each job's details.</strong>
+      <span>Open any role below and use “Your feedback.” Rate only the jobs you want to.</span>
+    </aside>
 
     <div class="workspace-grid">
       <section class="job-ledger" aria-label="Ranked jobs">

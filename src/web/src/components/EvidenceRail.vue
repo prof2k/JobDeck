@@ -104,6 +104,69 @@ function submitFeedback(): void {
         <p>{{ job.recommendation }}</p>
       </section>
 
+      <section
+        v-if="calibration"
+        class="feedback-panel"
+        :aria-labelledby="`feedback-title-${job.id}`"
+      >
+        <div class="feedback-panel__heading">
+          <div>
+            <p class="eyebrow">Your feedback</p>
+            <h3 :id="`feedback-title-${job.id}`">Is this the kind of job you want?</h3>
+          </div>
+          <span>Optional</span>
+        </div>
+        <p class="feedback-intro">
+          Rate the jobs that give you a clear reaction. Skip any role you do not want to judge.
+        </p>
+        <div class="feedback-options" role="group" aria-label="Job fit feedback">
+          <button
+            v-for="option in [
+              ['strong_fit', 'Yes — strong fit'],
+              ['maybe', 'Maybe'],
+              ['wrong_fit', 'No — wrong fit'],
+              ['never_show', 'Never show similar'],
+            ]"
+            :key="option[0]"
+            type="button"
+            :class="{ active: feedbackVerdict === option[0] }"
+            :aria-pressed="feedbackVerdict === option[0]"
+            :disabled="offline"
+            @click="feedbackVerdict = option[0] as FeedbackVerdict"
+          >
+            {{ option[1] }}
+          </button>
+        </div>
+        <div class="feedback-fields">
+          <label>
+            <span>What influenced your choice? <small>Optional</small></span>
+            <input
+              v-model="feedbackReason"
+              type="text"
+              placeholder="Title, level, salary, location, scope…"
+              :disabled="offline"
+            >
+          </label>
+          <label>
+            <span>Anything the next search should know? <small>Optional</small></span>
+            <textarea
+              v-model="feedbackNote"
+              rows="3"
+              placeholder="Add context in your own words"
+              :disabled="offline"
+            ></textarea>
+          </label>
+        </div>
+        <button
+          class="button button--secondary"
+          type="button"
+          :disabled="!feedbackVerdict || offline"
+          @click="submitFeedback"
+        >
+          Save job feedback
+        </button>
+      </section>
+
       <section class="evidence-section">
         <div class="section-heading">
           <h3>Requirement evidence</h3>
@@ -157,55 +220,6 @@ function submitFeedback(): void {
         </a>
       </section>
 
-      <section v-if="calibration" class="feedback-panel">
-        <div class="section-heading">
-          <h3>Calibrate this match</h3>
-          <span>Pending agent review</span>
-        </div>
-        <div class="feedback-options" role="group" aria-label="Fit feedback">
-          <button
-            v-for="option in [
-              ['strong_fit', 'Strong fit'],
-              ['maybe', 'Maybe'],
-              ['wrong_fit', 'Wrong fit'],
-              ['never_show', 'Never show'],
-            ]"
-            :key="option[0]"
-            type="button"
-            :class="{ active: feedbackVerdict === option[0] }"
-            :disabled="offline"
-            @click="feedbackVerdict = option[0] as FeedbackVerdict"
-          >
-            {{ option[1] }}
-          </button>
-        </div>
-        <label>
-          <span>Primary reason</span>
-          <input
-            v-model="feedbackReason"
-            type="text"
-            placeholder="Level, title, salary, location, scope…"
-            :disabled="offline"
-          >
-        </label>
-        <label>
-          <span>Optional note</span>
-          <textarea
-            v-model="feedbackNote"
-            rows="3"
-            placeholder="What should the next search learn?"
-            :disabled="offline"
-          ></textarea>
-        </label>
-        <button
-          class="button button--secondary"
-          type="button"
-          :disabled="!feedbackVerdict || offline"
-          @click="submitFeedback"
-        >
-          Save feedback
-        </button>
-      </section>
     </div>
 
     <footer class="evidence-actions">

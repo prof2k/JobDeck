@@ -23,6 +23,10 @@ function progress(report: ReportListItem): number {
   if (report.jobCount === 0) return 0;
   return Math.round((report.appliedCount / report.jobCount) * 100);
 }
+
+function reportKindLabel(report: ReportListItem): string {
+  return report.kind === 'calibration' ? 'Feedback batch' : 'Search';
+}
 </script>
 
 <template>
@@ -32,7 +36,7 @@ function progress(report: ReportListItem): number {
         <p class="eyebrow">Local search ledger</p>
         <h1>Reports</h1>
         <p class="shelf-heading__copy">
-          Calibrated job batches, evidence, and application progress in one private place.
+          Job-search reports, fit feedback, and application progress in one private place.
         </p>
       </div>
       <dl v-if="summary" class="ledger-summary" aria-label="Job Deck summary">
@@ -58,7 +62,7 @@ function progress(report: ReportListItem): number {
       <p class="eyebrow">No reports yet</p>
       <h2>The desk is ready.</h2>
       <p>
-        Ask your job-search agent to create the first 15-role calibration report.
+        Your first 15-role feedback report will appear here when the search is ready.
       </p>
     </div>
     <ol v-else class="report-list">
@@ -70,7 +74,9 @@ function progress(report: ReportListItem): number {
           <span class="report-entry__body">
             <span class="report-entry__topline">
               <strong>{{ report.title }}</strong>
-              <span class="badge" :class="`badge--${report.kind}`">{{ report.kind }}</span>
+              <span class="badge" :class="`badge--${report.kind}`">
+                {{ reportKindLabel(report) }}
+              </span>
             </span>
             <span class="report-entry__summary">{{ report.summary }}</span>
             <span class="report-entry__meta">
