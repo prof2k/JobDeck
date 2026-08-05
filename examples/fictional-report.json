@@ -6,6 +6,13 @@
     "summary": "Six fictional roles that demonstrate direct, adjacent, and boundary-case evidence without using a real candidate's information.",
     "createdAt": "2026-08-05T18:00:00Z"
   },
+  "applicationHelper": {
+    "show": true,
+    "title": "Make applications easier",
+    "message": "Install Simplify Copilot to make filling out job applications easier.",
+    "linkLabel": "Install Simplify Copilot",
+    "url": "https://chromewebstore.google.com/detail/simplify-copilot-autofill/pbanhockgagggenencehbnadejlgchfc?utm_source=simplify&utm_medium=copilot"
+  },
   "jobs": [
     {
       "canonicalKey": "example:atlas:product-engineer",

@@ -6,6 +6,10 @@ Job Deck helps with resume improvement, opportunity research, evidence-based
 evaluation, feedback, and progress tracking. It does not submit applications or
 make personal, legal, or employment decisions for the user.
 
+![Job Deck split report showing a ranked job list with Ready, Opened, and Applied states beside the selected role's evidence and feedback](docs/images/job-deck-report.jpg)
+
+*Fictional demo data. No candidate information is shown.*
+
 ## Start from the repository URL
 
 Paste this into a new Codex task:
@@ -18,19 +22,18 @@ instructions, name the task **Job search agent**, and continue by asking for the
 current resume when one was not already attached. The user should not have to
 request setup, repeat the job-search request, or operate the repository.
 
-The same link can start a conversational workflow in ordinary ChatGPT, but a
-regular ChatGPT conversation does not install or run Job Deck's local dashboard.
-It should still help with the resume and job search using the capabilities it
-has, without pretending that local storage or the dashboard is active. Use a
-Codex local project for the complete local experience.
+The same link can start the workflow in ordinary ChatGPT. When a host cannot run
+the local dashboard but can create files, Job Deck delivers each completed batch
+as a standalone HTML report instead. The user does not need to install a runtime
+or handle a data file.
 
 > [!IMPORTANT]
 > **For agents opening this URL:** “Use this,” “start this,” “work on this,” or
 > “make this my job-search agent” means the user wants the workflow, not a
 > repository review. In a Codex or local-repository environment, clone it, enter
-> the checkout, read `AGENTS.md`, and continue the original request. In a chat
-> environment without local repository execution, continue conversationally and
-> do not claim that the local dashboard was installed. Explain or review the
+> the checkout, read `AGENTS.md`, and continue the original request. In a host
+> without a usable local dashboard, continue the workflow and generate a
+> standalone HTML report when file creation is available. Explain or review the
 > repository only when the user explicitly requests that.
 
 ## Start simply
@@ -82,8 +85,8 @@ Applications remain manual. Opening an official application page means
 1. Share a resume or ask Job Deck to help create one.
 2. Answer only the missing search decisions in a short guided batch.
 3. Confirm the titles, level, and boundaries Job Deck recommends.
-4. Job research and dashboard preparation begin automatically and in parallel.
-5. Review 15 calibration roles in the local dashboard.
+4. Job research and report preparation begin automatically and in parallel.
+5. Review 15 calibration roles in the local dashboard or standalone HTML report.
 6. Give feedback, apply manually, and continue with focused batches when ready.
 
 ## Private by structure
@@ -109,10 +112,12 @@ private files directly from the contract in `AGENTS.md` as they become useful.
 - `src/server/` — Go server, SQLite schema, API, and tests.
 - `src/web/` — Vue interface source, design contract, and committed production
   output.
+- `src/static-report/` — self-contained single-report fallback used when the
+  local dashboard cannot run.
 
-The root `jobdeck` executable is created locally when the first report is
-requested. It is a derived artifact and is not distributed with the toolkit.
-The committed web output means normal use does not require Bun or Node.js.
+The root `jobdeck` executable is created locally when a compatible runtime is
+already available. It is a derived artifact and is not distributed with the
+toolkit. Report delivery never requires the user to install Go, Bun, or Node.js.
 
 Inside the private workspace, `user-profile.md` records factual candidate
 evidence, `search-preferences.md` records the current job-search contract, and

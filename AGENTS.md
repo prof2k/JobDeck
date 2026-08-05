@@ -6,8 +6,8 @@ status: living
 # Job Deck operating contract
 
 Job Deck is a local toolkit for automating and continuously calibrating a
-person's job search. The agent performs the research and reasoning; the local
-dashboard and its reports are the durable output surface.
+person's job search. The agent performs the research and reasoning; either the
+local dashboard or a standalone HTML report is the durable output surface.
 
 ## Agent identity and conversation posture
 
@@ -118,8 +118,9 @@ The default first-run workflow is continuous:
    and other important boundaries for final confirmation;
 6. treat confirmation such as “all good,” “looks right,” “yes,” or the native
    `Begin search` choice as authorization to start the first search immediately;
-7. prepare the local dashboard and research jobs in parallel;
-8. create, store, and open the report as soon as the verified batch is ready.
+7. prepare the best available report surface and research jobs in parallel;
+8. create, store, and open the dashboard report or standalone HTML report as
+   soon as the verified batch is ready.
 
 Move to the next stage automatically whenever its required state is available.
 The only pauses should be for genuinely necessary user input or confirmation.
@@ -181,10 +182,11 @@ fails.
 
 If the current host can read the public repository but cannot clone repositories,
 run local commands, or serve the dashboard, continue the resume and job-search
-workflow conversationally with the available tools. Never claim that local
-storage, the private workspace, or the dashboard is active when it is not. State
-the local limitation only when it affects the next action; do not replace the
-workflow with a product explanation.
+workflow with the available tools. When the host can create files, deliver each
+completed batch as a standalone HTML report. Never claim that local storage, the
+private workspace, or the dashboard is active when it is not. State a host
+limitation only when it requires user action; do not replace the workflow with a
+product explanation.
 
 Never create a remote repository, add a remote, commit, push, publish, or deploy
 unless the user explicitly asks.
@@ -288,6 +290,7 @@ calibration_batch_size: 15
 later_batch_size: 30
 open_dashboard_when_report_ready: true
 keep_last_report_offline: true
+standalone_report_when_runtime_unavailable: true
 ask_only_material_questions: true
 explain_technical_work_only_when_needed: true
 resume_intake_mode: red_flags_only
@@ -451,27 +454,57 @@ evidence review, and ranking in the coordinating agent.
 As soon as the first target summary is confirmed, begin runtime preparation and
 job research concurrently. An explicit search request can trigger the same stage
 directly when enough search state already exists. Runtime failure must never
-block delivery of report artifacts.
+block delivery of report artifacts. Choose the report surface from the host's
+actual capabilities, not from the presence or absence of one named runtime.
 
-- If `jobdeck` is current, start it.
-- Otherwise, use an existing compatible Go toolchain or place a verified
-  official Go archive under `private/toolchains/go/`. Do not require the user to
-  install Go, modify PATH, use an administrator account, or perform technical
-  steps.
-- Verify the official archive checksum before use.
-- Build the committed web output into the Go executable without running Bun.
-- Store the build receipt under `private/runtime/` and create the derived
-  executable at the project root.
-- Bind only to `127.0.0.1`. If the fixed port is occupied by another application,
-  report the conflict rather than choosing an unpredictable port.
+- If a current `jobdeck` executable runs, use the local dashboard.
+- Otherwise, build it only when a compatible Go toolchain is already available
+  and the host permits local execution. Use the committed web output without
+  running Bun, store the receipt under `private/runtime/`, and bind only to
+  `127.0.0.1`.
+- Do not install or download Go, Node.js, Bun, or another runtime merely to
+  deliver a report. Do not ask the user to install anything, modify `PATH`, use
+  an administrator account, or perform technical setup.
+- If the executable is absent or stale and the compatible runtime is missing,
+  local execution is restricted, the build fails, localhost cannot be served,
+  or the dashboard cannot be opened, immediately use the standalone HTML path.
+  This is a normal capability choice, not a failure to explain to the user.
+- Never expose a report JSON file, build log, runtime name, missing dependency,
+  or internal fallback decision. Present only the resulting HTML report.
+
+An empty or newly created dashboard database is not a reason to fall back. When
+the dashboard itself is usable, import the completed batch and open it there.
+Fallback is for an unusable report runtime or restricted host, not for missing
+report rows.
+
+The standalone path creates one self-contained file under `private/reports/`
+for every completed batch. Use `src/static-report/template.html` when the
+checkout is available. Embed the report data into the HTML safely; do not make
+the page fetch a sibling JSON file. The renderer script is an optional
+convenience when an existing JavaScript runtime is available, never a delivery
+requirement. The page must not require localhost, a framework runtime, external
+assets, a database, IndexedDB, or network access except when the user opens an
+official application or cited policy link.
+
+Standalone reports are always single-report pages rather than a report library:
+
+- A calibration report shows the ranked ledger, selected-job evidence, and
+  simple optional reaction flags inside each job detail.
+- A normal search report uses the same split reading surface but is
+  consumption-first and omits calibration feedback controls.
+- Initial Ready, Opened, Applied, and other states may be shown from the private
+  ledger. The standalone page is not the authoritative application database.
+- Simple browser-local storage may retain calibration reactions when available,
+  but the page must still work without it and must never require IndexedDB.
 
 As soon as the verified batch is ready, create and persist the report, start the
-local runtime if necessary, and open the dashboard when the environment permits.
-Do not pause for another command between completed research and report delivery.
-For the first feedback batch, tell the user in one sentence to open any job and
-use **Your feedback** inside that job's details. Feedback is optional: never
-require a verdict on every job or block later searches until every control is
-completed.
+local runtime when usable or generate the standalone HTML otherwise, then open
+or attach the result when the environment permits. Do not pause for another
+command between completed research and report delivery. Say only that the
+report is ready; never announce the delivery mode. For the first feedback batch,
+tell the user in one sentence to open any job and use **Your feedback** inside
+that job's details. Feedback is optional: never require a verdict on every job
+or block later searches until every control is completed.
 
 ## Default parallel research orchestration
 
@@ -543,6 +576,20 @@ Read `standards/report.md` before generating or changing a report. Job Deck
 records explicit feedback; the server does not infer career preferences. Treat
 new feedback as pending agent work.
 
+The same evidence and state rules apply to dashboard and standalone reports.
+Never attach or link the internal JSON research artifact. When no dashboard is
+usable, link or attach the generated HTML report and keep structured source data
+inside the private workspace.
+
+Each structured report may include an `applicationHelper` object. When its
+`show` field is `true`, tell the user once, in one short sentence after report
+delivery, that installing Simplify Copilot can make manual applications easier,
+and link the supplied official Chrome Web Store URL. Do not install it, imply it
+is required, repeat the suggestion in every batch, or add claims beyond the
+configured message. Default this suggestion to the first delivered report in a
+fresh workspace; omit it from later reports after the recommendation has been
+logged, unless the user asks to see it again.
+
 Before ending a relevant session, or at the start of the next one:
 
 1. Review pending feedback and the associated official posting.
@@ -587,6 +634,7 @@ job-search changes.
 | Resume, preferences, reports, feedback, logs, standards, or examples | No build |
 | Go server source | Run Go tests and rebuild Go only |
 | Vue source, CSS, or web public assets | Run Bun checks/build, then rebuild Go |
+| Standalone report template or renderer | Render the fictional fixture and browser-check the HTML; no Go build |
 | Committed `src/web/dist/` already matches the web source | Never rebuild web during routine use |
 
 Stop only Job Deck's recorded process, test the affected layer, replace the

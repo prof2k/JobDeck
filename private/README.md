@@ -8,7 +8,8 @@ tracked. Everything else under `private/` must remain ignored.
 - `search-preferences.md` — desired roles, constraints, and calibration lessons.
 - `user-preferences.yaml` — parallelism, report, and interaction settings.
 - `resume/original/` — the unchanged source resume.
-- `reports/` — generated report artifacts and research manifests.
+- `reports/` — generated report artifacts and research manifests, including
+  standalone HTML reports when the local dashboard is unavailable.
 - `logs/` — append-only events and a compact readable activity log.
 - `agent-workspace/` — compact derived context, including the pre-search brief.
 - `runtime/` — local build receipts, process metadata, and temporary binaries.

@@ -1,0 +1,1097 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>Job Deck report</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --desk: #0f0f11;
+      --sheet: #19191d;
+      --raised: #202026;
+      --feedback-sheet: #24242a;
+      --inset: #121216;
+      --paper: #f0eff4;
+      --paper-secondary: #c2c0c8;
+      --paper-tertiary: #96949e;
+      --paper-muted: #6f6d77;
+      --violet: #a9adff;
+      --violet-quiet: rgba(169, 173, 255, 0.12);
+      --amber: #e6c86e;
+      --amber-quiet: rgba(230, 200, 110, 0.12);
+      --green: #75c89a;
+      --green-quiet: rgba(117, 200, 154, 0.12);
+      --danger: #e98b9f;
+      --danger-quiet: rgba(233, 139, 159, 0.12);
+      --line: rgba(240, 239, 244, 0.11);
+      --line-soft: rgba(240, 239, 244, 0.065);
+      --focus: rgba(169, 173, 255, 0.55);
+      --radius-control: 6px;
+      --radius-panel: 10px;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      background: var(--desk);
+      color: var(--paper);
+      margin: 0;
+      min-height: 100%;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      color: inherit;
+      font: inherit;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    a {
+      color: var(--violet);
+    }
+
+    h1,
+    h2,
+    h3,
+    p,
+    dl,
+    dd {
+      margin-top: 0;
+    }
+
+    .mono {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .eyebrow {
+      color: var(--paper-tertiary);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .report-shell {
+      margin: 0 auto;
+      max-width: 1480px;
+      padding: clamp(28px, 4vw, 58px) 0 52px;
+      width: 90vw;
+    }
+
+    .report-heading {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .report-heading__topline {
+      align-items: start;
+      display: flex;
+      gap: 24px;
+      justify-content: space-between;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 3.3vw, 3.4rem);
+      font-weight: 680;
+      letter-spacing: -0.055em;
+      line-height: 0.98;
+      margin-bottom: 10px;
+    }
+
+    .report-summary {
+      color: var(--paper-secondary);
+      line-height: 1.55;
+      margin-bottom: 0;
+      max-width: 780px;
+    }
+
+    .report-count {
+      color: var(--paper-tertiary);
+      font-size: 0.72rem;
+      padding-top: 6px;
+      white-space: nowrap;
+    }
+
+    .calibration-guide,
+    .application-helper {
+      align-items: center;
+      background: var(--sheet);
+      border-radius: var(--radius-control);
+      color: var(--paper-secondary);
+      display: flex;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+      gap: 8px 12px;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+    }
+
+    .calibration-guide strong,
+    .application-helper strong {
+      color: var(--paper);
+    }
+
+    .application-helper a {
+      margin-left: auto;
+      text-decoration: none;
+    }
+
+    .workspace {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: minmax(320px, 0.34fr) minmax(0, 0.66fr);
+    }
+
+    .ledger,
+    .detail {
+      border-radius: var(--radius-panel);
+      display: flex;
+      flex-direction: column;
+      height: min(78vh, 840px);
+      min-height: 620px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .ledger {
+      background: var(--inset);
+      border: 1px solid var(--line);
+    }
+
+    .detail {
+      background: var(--sheet);
+    }
+
+    .ledger-controls {
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 8px;
+      grid-template-columns: minmax(0, 1fr) 126px;
+      padding: 12px;
+    }
+
+    .ledger-controls input,
+    .ledger-controls select,
+    .feedback-field textarea {
+      background: #111115;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-control);
+      color: var(--paper);
+      min-height: 38px;
+      padding: 8px 10px;
+      width: 100%;
+    }
+
+    .ledger-controls input::placeholder,
+    .feedback-field textarea::placeholder {
+      color: var(--paper-muted);
+    }
+
+    .ledger-count {
+      border-bottom: 1px solid var(--line-soft);
+      color: var(--paper-tertiary);
+      font-size: 0.72rem;
+      margin: 0;
+      padding: 9px 14px;
+    }
+
+    .job-list {
+      list-style: none;
+      margin: 0;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    .job-row {
+      align-items: center;
+      background: transparent;
+      border: 0;
+      color: inherit;
+      cursor: pointer;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 26px minmax(0, 1fr) 42px auto;
+      padding: 14px 12px;
+      text-align: left;
+      transition: background-color 140ms ease;
+      width: 100%;
+    }
+
+    .job-row:hover,
+    .job-row[aria-pressed="true"] {
+      background: var(--violet-quiet);
+    }
+
+    .job-row[aria-pressed="true"] {
+      box-shadow: inset 2px 0 0 var(--violet);
+    }
+
+    .job-row__rank {
+      color: var(--paper-muted);
+      font-size: 0.67rem;
+    }
+
+    .job-row__identity {
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .job-row__identity strong,
+    .job-row__identity small,
+    .job-row__identity span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .job-row__identity strong {
+      font-size: 0.84rem;
+    }
+
+    .job-row__identity small {
+      color: var(--paper-secondary);
+      font-size: 0.75rem;
+    }
+
+    .job-row__identity span,
+    .job-row__score small {
+      color: var(--paper-muted);
+      font-size: 0.62rem;
+    }
+
+    .job-row__score {
+      color: var(--paper-secondary);
+      font-size: 0.82rem;
+      text-align: right;
+    }
+
+    .job-row__score small {
+      display: block;
+      margin-top: 3px;
+    }
+
+    .badge {
+      align-items: center;
+      background: var(--raised);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--paper-secondary);
+      display: inline-flex;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      min-height: 22px;
+      padding: 2px 8px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge--ready {
+      background: var(--violet-quiet);
+      border-color: rgba(169, 173, 255, 0.2);
+      color: var(--violet);
+    }
+
+    .badge--opened,
+    .badge--adjacent {
+      background: var(--amber-quiet);
+      border-color: rgba(230, 200, 110, 0.2);
+      color: var(--amber);
+    }
+
+    .badge--applied,
+    .badge--direct {
+      background: var(--green-quiet);
+      border-color: rgba(117, 200, 154, 0.2);
+      color: var(--green);
+    }
+
+    .badge--skipped,
+    .badge--expired,
+    .badge--rejected,
+    .badge--none {
+      background: var(--danger-quiet);
+      border-color: rgba(233, 139, 159, 0.2);
+      color: var(--danger);
+    }
+
+    .detail-scroll {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding: clamp(22px, 3vw, 40px);
+    }
+
+    .job-heading {
+      align-items: start;
+      display: grid;
+      gap: 20px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      margin-bottom: 22px;
+    }
+
+    .job-heading h2 {
+      font-size: clamp(1.65rem, 2.6vw, 2.75rem);
+      letter-spacing: -0.045em;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .job-heading__badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .score-stamp {
+      align-items: center;
+      border: 1px solid var(--violet);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      height: 70px;
+      justify-content: center;
+      width: 70px;
+    }
+
+    .score-stamp strong {
+      font-size: 1.05rem;
+    }
+
+    .score-stamp small {
+      color: var(--paper-tertiary);
+      font-size: 0.55rem;
+      margin-top: 3px;
+      text-transform: uppercase;
+    }
+
+    .job-facts {
+      border-bottom: 1px solid var(--line-soft);
+      border-top: 1px solid var(--line-soft);
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-bottom: 24px;
+      padding: 16px 0;
+    }
+
+    .job-facts dt {
+      color: var(--paper-muted);
+      font-size: 0.61rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .job-facts dd {
+      color: var(--paper-secondary);
+      font-size: 0.78rem;
+      overflow-wrap: anywhere;
+    }
+
+    .section-label {
+      color: var(--paper-tertiary);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .recommendation {
+      border-left: 2px solid var(--violet);
+      color: var(--paper-secondary);
+      line-height: 1.6;
+      margin-bottom: 28px;
+      padding-left: 14px;
+    }
+
+    .feedback-panel {
+      background: var(--feedback-sheet);
+      border-radius: var(--radius-panel);
+      margin-bottom: 30px;
+      padding: 20px;
+    }
+
+    .feedback-panel__heading {
+      align-items: start;
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+    }
+
+    .feedback-panel h3 {
+      font-size: 1.15rem;
+      margin-bottom: 8px;
+    }
+
+    .feedback-panel p {
+      color: var(--paper-tertiary);
+      font-size: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .feedback-flags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .feedback-flags button {
+      background: var(--raised);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-control);
+      cursor: pointer;
+      font-size: 0.72rem;
+      padding: 8px 10px;
+    }
+
+    .feedback-flags button[aria-pressed="true"] {
+      background: var(--violet-quiet);
+      border-color: var(--violet);
+      color: var(--violet);
+    }
+
+    .feedback-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .feedback-field span {
+      color: var(--paper-tertiary);
+      font-size: 0.68rem;
+    }
+
+    .feedback-field textarea {
+      min-height: 74px;
+      resize: vertical;
+    }
+
+    .evidence-heading {
+      align-items: center;
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .evidence-heading h3,
+    .text-section h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
+
+    .evidence-count {
+      color: var(--paper-muted);
+      font-size: 0.65rem;
+    }
+
+    .evidence-list {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .evidence-item {
+      background: var(--inset);
+      border-radius: var(--radius-control);
+      padding: 14px;
+    }
+
+    .evidence-item__heading {
+      align-items: start;
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .evidence-item strong {
+      font-size: 0.82rem;
+    }
+
+    .evidence-item p,
+    .text-section li,
+    .policy p {
+      color: var(--paper-secondary);
+      font-size: 0.77rem;
+      line-height: 1.55;
+    }
+
+    .evidence-item small {
+      color: var(--paper-muted);
+      font-size: 0.63rem;
+    }
+
+    .text-section {
+      margin-bottom: 24px;
+    }
+
+    .text-section ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .policy {
+      background: var(--inset);
+      border-radius: var(--radius-control);
+      margin-bottom: 4px;
+      padding: 14px;
+    }
+
+    .policy a {
+      font-size: 0.69rem;
+    }
+
+    .detail-actions {
+      align-items: center;
+      background: rgba(25, 25, 29, 0.96);
+      border-top: 1px solid var(--line);
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      padding: 14px 18px;
+    }
+
+    .detail-actions span {
+      color: var(--paper-tertiary);
+      font-size: 0.7rem;
+    }
+
+    .button {
+      background: var(--violet);
+      border: 1px solid transparent;
+      border-radius: var(--radius-control);
+      color: #101014;
+      display: inline-flex;
+      font-size: 0.76rem;
+      font-weight: 700;
+      justify-content: center;
+      padding: 9px 12px;
+      text-decoration: none;
+    }
+
+    .empty-state {
+      color: var(--paper-tertiary);
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .workspace {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .ledger {
+        height: auto;
+        max-height: 360px;
+        min-height: 0;
+      }
+
+      .detail {
+        height: min(78vh, 760px);
+        min-height: 560px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .report-shell {
+        width: calc(100vw - 24px);
+      }
+
+      .report-heading__topline,
+      .detail-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .ledger-controls,
+      .job-facts {
+        grid-template-columns: 1fr;
+      }
+
+      .job-row {
+        grid-template-columns: 24px minmax(0, 1fr) auto;
+      }
+
+      .job-row > .badge {
+        display: none;
+      }
+
+      .job-heading {
+        grid-template-columns: 1fr;
+      }
+
+      .score-stamp {
+        border-radius: var(--radius-control);
+        flex-direction: row;
+        gap: 6px;
+        height: auto;
+        justify-content: flex-start;
+        padding: 7px 9px;
+        width: fit-content;
+      }
+
+      .application-helper a,
+      .button {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="report-shell">
+    <header class="report-heading">
+      <div class="report-heading__topline">
+        <div>
+          <p id="report-kind" class="eyebrow"></p>
+          <h1 id="report-title"></h1>
+          <p id="report-summary" class="report-summary"></p>
+        </div>
+        <span id="report-count" class="report-count mono"></span>
+      </div>
+    </header>
+
+    <aside id="application-helper" class="application-helper" hidden></aside>
+    <aside id="calibration-guide" class="calibration-guide" hidden>
+      <strong>Give feedback inside each job's details.</strong>
+      <span>Use the reaction flags only on jobs that give you a clear response.</span>
+    </aside>
+
+    <section class="workspace" aria-label="Job report">
+      <aside class="ledger" aria-label="Ranked jobs">
+        <div class="ledger-controls">
+          <input id="job-search" type="search" aria-label="Filter roles" placeholder="Filter roles">
+          <select id="state-filter" aria-label="Filter by state">
+            <option value="all">All states</option>
+            <option value="ready">Ready</option>
+            <option value="opened">Opened</option>
+            <option value="applied">Applied</option>
+            <option value="skipped">Skipped</option>
+          </select>
+        </div>
+        <p id="ledger-count" class="ledger-count"></p>
+        <ol id="job-list" class="job-list"></ol>
+      </aside>
+
+      <article id="job-detail" class="detail" aria-live="polite"></article>
+    </section>
+  </main>
+
+  <script id="jobdeck-report-data" type="application/json">__JOB_DECK_REPORT_DATA__</script>
+  <script>
+    (() => {
+      'use strict';
+
+      const dataElement = document.querySelector('#jobdeck-report-data');
+      const reportData = JSON.parse(dataElement.textContent);
+      const report = reportData.report || {};
+      const jobs = Array.isArray(reportData.jobs) ? reportData.jobs : [];
+      const calibration = report.kind === 'calibration';
+      const storageKey = `jobdeck:standalone:${report.id || 'report'}:feedback`;
+      const validStates = new Set([
+        'ready',
+        'opened',
+        'applied',
+        'skipped',
+        'expired',
+        'rejected',
+      ]);
+      const validMatches = new Set(['direct', 'adjacent', 'none']);
+      const feedbackLabels = {
+        strong: 'Strong fit',
+        maybe: 'Maybe',
+        wrong: 'Wrong fit',
+        never: 'Never show similar',
+      };
+      const escapeCharacters = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;',
+      };
+      const elements = {
+        applicationHelper: document.querySelector('#application-helper'),
+        calibrationGuide: document.querySelector('#calibration-guide'),
+        detail: document.querySelector('#job-detail'),
+        jobList: document.querySelector('#job-list'),
+        ledgerCount: document.querySelector('#ledger-count'),
+        reportCount: document.querySelector('#report-count'),
+        reportKind: document.querySelector('#report-kind'),
+        reportSummary: document.querySelector('#report-summary'),
+        reportTitle: document.querySelector('#report-title'),
+        search: document.querySelector('#job-search'),
+        stateFilter: document.querySelector('#state-filter'),
+      };
+
+      const escapeHtml = (value) => String(value ?? '').replace(
+        /[&<>"']/g,
+        (character) => escapeCharacters[character],
+      );
+
+      const safeUrl = (value) => {
+        try {
+          const parsed = new URL(String(value));
+          return ['https:', 'http:'].includes(parsed.protocol) ? parsed.href : '';
+        } catch {
+          return '';
+        }
+      };
+
+      const formatDate = (value) => {
+        if (!value) return 'Not recorded';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value);
+        return new Intl.DateTimeFormat(undefined, {
+          dateStyle: 'medium',
+          timeStyle: 'short',
+        }).format(date);
+      };
+
+      const jobKey = (job, index = 0) => String(
+        job.canonicalKey || job.id || `${job.company}-${job.title}-${index}`,
+      );
+
+      const stateName = (job) => {
+        const normalized = String(job.state || 'ready').toLowerCase();
+        return validStates.has(normalized) ? normalized : 'ready';
+      };
+
+      const matchName = (match) => {
+        const normalized = String(match || 'none').toLowerCase();
+        return validMatches.has(normalized) ? normalized : 'none';
+      };
+
+      const loadFeedback = () => {
+        if (!calibration) return {};
+        try {
+          const value = window.localStorage.getItem(storageKey);
+          return value ? JSON.parse(value) : {};
+        } catch {
+          return {};
+        }
+      };
+
+      const feedback = loadFeedback();
+      let selectedKey = jobs.length > 0 ? jobKey(jobs[0]) : '';
+      let query = '';
+      let stateFilter = 'all';
+
+      const saveFeedback = () => {
+        if (!calibration) return;
+        try {
+          window.localStorage.setItem(storageKey, JSON.stringify(feedback));
+        } catch {
+          // The report remains fully usable when browser storage is unavailable.
+        }
+      };
+
+      const feedbackFor = (job) => feedback[jobKey(job)] || {
+        verdict: '',
+        note: '',
+      };
+
+      const filteredJobs = () => jobs.filter((job) => {
+        const searchable = `${job.company || ''} ${job.title || ''} ${job.location || ''}`
+          .toLowerCase();
+        const matchesQuery = searchable.includes(query.trim().toLowerCase());
+        const matchesState = stateFilter === 'all' || stateName(job) === stateFilter;
+        return matchesQuery && matchesState;
+      });
+
+      const renderApplicationHelper = () => {
+        const helper = reportData.applicationHelper;
+        const helperUrl = safeUrl(helper?.url);
+        if (!helper?.show || !helperUrl) return;
+
+        elements.applicationHelper.hidden = false;
+        elements.applicationHelper.innerHTML = `
+          <strong>${escapeHtml(helper.title || 'Make applications easier')}</strong>
+          <span>${escapeHtml(helper.message || 'Install Simplify Copilot to autofill job applications.')}</span>
+          <a href="${escapeHtml(helperUrl)}" target="_blank" rel="noopener noreferrer">
+            ${escapeHtml(helper.linkLabel || 'Install Simplify Copilot')} ↗
+          </a>
+        `;
+      };
+
+      const renderHeader = () => {
+        elements.reportKind.textContent = calibration ? 'Feedback batch' : 'Search report';
+        elements.reportTitle.textContent = report.title || 'Job search report';
+        elements.reportSummary.textContent = report.summary || '';
+        elements.reportCount.textContent = `${jobs.length} ${jobs.length === 1 ? 'role' : 'roles'}`;
+        elements.calibrationGuide.hidden = !calibration;
+        document.title = `${report.title || 'Job search report'} · Job Deck`;
+        renderApplicationHelper();
+      };
+
+      const renderList = () => {
+        const visibleJobs = filteredJobs();
+        elements.ledgerCount.textContent = `${visibleJobs.length} of ${jobs.length} roles`;
+
+        if (visibleJobs.length === 0) {
+          elements.jobList.innerHTML = '<li class="empty-state">No roles match this filter.</li>';
+          return;
+        }
+
+        elements.jobList.innerHTML = visibleJobs.map((job, index) => {
+          const key = jobKey(job, index);
+          const state = stateName(job);
+          const score = job.score ?? '—';
+          return `
+            <li>
+              <button
+                class="job-row"
+                type="button"
+                data-job-key="${escapeHtml(key)}"
+                aria-pressed="${key === selectedKey}"
+              >
+                <span class="job-row__rank mono">${String(job.rank || index + 1).padStart(2, '0')}</span>
+                <span class="job-row__identity">
+                  <strong>${escapeHtml(job.company || 'Unknown company')}</strong>
+                  <small>${escapeHtml(job.title || 'Untitled role')}</small>
+                  <span>${escapeHtml(job.location || 'Location not listed')}</span>
+                </span>
+                <span class="job-row__score mono">
+                  ${escapeHtml(score)}
+                  <small>Class ${escapeHtml(job.fitClass || '—')}</small>
+                </span>
+                <span class="badge badge--${state}">${escapeHtml(state)}</span>
+              </button>
+            </li>
+          `;
+        }).join('');
+      };
+
+      const renderFeedback = (job) => {
+        if (!calibration) return '';
+        const current = feedbackFor(job);
+        return `
+          <section class="feedback-panel" aria-label="Is this the kind of job you want?">
+            <div class="feedback-panel__heading">
+              <div>
+                <p class="section-label">Your feedback</p>
+                <h3>Is this the kind of job you want?</h3>
+              </div>
+              <span class="badge">Optional</span>
+            </div>
+            <p>Choose a reaction only when the role gives you a clear response.</p>
+            <div class="feedback-flags" role="group" aria-label="Job fit feedback">
+              ${Object.entries(feedbackLabels).map(([value, label]) => `
+                <button
+                  type="button"
+                  data-feedback="${value}"
+                  aria-pressed="${current.verdict === value}"
+                >${escapeHtml(label)}</button>
+              `).join('')}
+            </div>
+            <label class="feedback-field">
+              <span>Optional context</span>
+              <textarea
+                data-feedback-note
+                placeholder="Title, level, location, salary, scope…"
+              >${escapeHtml(current.note)}</textarea>
+            </label>
+          </section>
+        `;
+      };
+
+      const renderTextList = (title, values) => {
+        if (!Array.isArray(values) || values.length === 0) return '';
+        return `
+          <section class="text-section">
+            <h3>${escapeHtml(title)}</h3>
+            <ul>${values.map((value) => `<li>${escapeHtml(value)}</li>`).join('')}</ul>
+          </section>
+        `;
+      };
+
+      const renderPolicy = (policy) => {
+        if (!policy?.summary) return '';
+        const policyUrl = safeUrl(policy.sourceUrl);
+        return `
+          <section class="policy">
+            <p class="section-label">Verified company policy</p>
+            <p>${escapeHtml(policy.summary)}</p>
+            ${policyUrl ? `
+              <a href="${escapeHtml(policyUrl)}" target="_blank" rel="noopener noreferrer">
+                Source · verified ${escapeHtml(formatDate(policy.verifiedAt))}
+              </a>
+            ` : ''}
+          </section>
+        `;
+      };
+
+      const renderDetail = () => {
+        const selectedJob = jobs.find((job, index) => jobKey(job, index) === selectedKey)
+          || filteredJobs()[0]
+          || jobs[0];
+        if (!selectedJob) {
+          elements.detail.innerHTML = '<div class="empty-state">No jobs are available.</div>';
+          return;
+        }
+
+        selectedKey = jobKey(selectedJob);
+        const state = stateName(selectedJob);
+        const applicationUrl = safeUrl(selectedJob.applicationUrl);
+        const requirements = Array.isArray(selectedJob.requirements)
+          ? selectedJob.requirements
+          : [];
+
+        elements.detail.innerHTML = `
+          <div class="detail-scroll">
+            <header class="job-heading">
+              <div>
+                <p class="eyebrow">${escapeHtml(selectedJob.company || 'Unknown company')}</p>
+                <h2>${escapeHtml(selectedJob.title || 'Untitled role')}</h2>
+                <div class="job-heading__badges">
+                  <span class="badge badge--${state}">${escapeHtml(state)}</span>
+                  ${selectedJob.arrangement ? `<span class="badge">${escapeHtml(selectedJob.arrangement)}</span>` : ''}
+                  ${selectedJob.salary ? `<span class="badge">${escapeHtml(selectedJob.salary)}</span>` : ''}
+                </div>
+              </div>
+              <div class="score-stamp mono">
+                <strong>${escapeHtml(selectedJob.score ?? '—')}</strong>
+                <small>Class ${escapeHtml(selectedJob.fitClass || '—')}</small>
+              </div>
+            </header>
+
+            <dl class="job-facts">
+              <div><dt>Location</dt><dd>${escapeHtml(selectedJob.location || 'Not listed')}</dd></div>
+              <div><dt>Verified</dt><dd>${escapeHtml(formatDate(selectedJob.liveVerifiedAt))}</dd></div>
+              <div><dt>Official source</dt><dd>${escapeHtml(selectedJob.source || 'Official application page')}</dd></div>
+              <div><dt>Role key</dt><dd class="mono">${escapeHtml(selectedJob.canonicalKey || 'Not recorded')}</dd></div>
+            </dl>
+
+            <section class="recommendation">
+              <p class="section-label">Recommendation</p>
+              <p>${escapeHtml(selectedJob.recommendation || 'Review the evidence below before applying.')}</p>
+            </section>
+
+            ${renderFeedback(selectedJob)}
+
+            <section>
+              <div class="evidence-heading">
+                <h3>Requirement evidence</h3>
+                <span class="evidence-count mono">${requirements.length} reviewed</span>
+              </div>
+              <div class="evidence-list">
+                ${requirements.length > 0 ? requirements.map((item) => {
+                  const match = matchName(item.match);
+                  return `
+                    <article class="evidence-item">
+                      <div class="evidence-item__heading">
+                        <strong>${escapeHtml(item.requirement || 'Requirement')}</strong>
+                        <span class="badge badge--${match}">${escapeHtml(match)}</span>
+                      </div>
+                      <p>${escapeHtml(item.evidence || 'No evidence recorded.')}</p>
+                      <small>Source: ${escapeHtml(item.source || 'Not recorded')}</small>
+                    </article>
+                  `;
+                }).join('') : '<p class="empty-state">No requirement evidence was recorded.</p>'}
+              </div>
+            </section>
+
+            ${renderTextList('Gaps', selectedJob.gaps)}
+            ${renderTextList('Risks', selectedJob.risks)}
+            ${renderPolicy(selectedJob.companyPolicy)}
+          </div>
+          <footer class="detail-actions">
+            <span>${calibration ? 'Feedback is optional.' : 'Review the evidence before applying.'}</span>
+            ${applicationUrl ? `
+              <a
+                class="button"
+                href="${escapeHtml(applicationUrl)}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Open official application ↗</a>
+            ` : '<span>Official application unavailable</span>'}
+          </footer>
+        `;
+      };
+
+      const render = () => {
+        renderList();
+        renderDetail();
+      };
+
+      elements.jobList.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-job-key]');
+        if (!button) return;
+        selectedKey = button.dataset.jobKey;
+        render();
+      });
+
+      elements.search.addEventListener('input', (event) => {
+        query = event.target.value;
+        renderList();
+      });
+
+      elements.stateFilter.addEventListener('change', (event) => {
+        stateFilter = event.target.value;
+        renderList();
+      });
+
+      elements.detail.addEventListener('click', (event) => {
+        const flag = event.target.closest('[data-feedback]');
+        if (!flag || !calibration) return;
+        const selectedJob = jobs.find((job) => jobKey(job) === selectedKey);
+        if (!selectedJob) return;
+        const current = feedbackFor(selectedJob);
+        feedback[selectedKey] = {
+          ...current,
+          verdict: current.verdict === flag.dataset.feedback ? '' : flag.dataset.feedback,
+        };
+        saveFeedback();
+        renderDetail();
+      });
+
+      elements.detail.addEventListener('input', (event) => {
+        if (!event.target.matches('[data-feedback-note]') || !calibration) return;
+        const selectedJob = jobs.find((job) => jobKey(job) === selectedKey);
+        if (!selectedJob) return;
+        feedback[selectedKey] = {
+          ...feedbackFor(selectedJob),
+          note: event.target.value,
+        };
+        saveFeedback();
+      });
+
+      renderHeader();
+      render();
+    })();
+  </script>
+</body>
+</html>

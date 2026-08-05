@@ -29,10 +29,13 @@ support serious comparison and quiet enough that evidence leads.
 The domain is search batches, shortlists, evidence, constraints, freshness,
 application history, progress stamps, and calibration corrections.
 
-The wide evidence sheet is the signature. Ranked roles remain a compact ledger;
-the selected role expands below it into requirement-level evidence, gaps,
-application state, and an unmistakable in-context feedback surface. The same
-sheet remains legible in an offline snapshot.
+The split evidence desk is the signature. On desktop, ranked roles remain a
+compact, status-rich ledger on the left while the selected role occupies the
+larger evidence sheet on the right. Both panes share a fixed working height and
+scroll independently. The sheet contains requirement-level evidence, gaps,
+application state, and an unmistakable in-context feedback surface. On smaller
+screens the ledger stacks above the selected role, and the same sheet remains
+legible in an offline snapshot.
 
 ### Visual system
 
@@ -58,7 +61,7 @@ sheet remains legible in an offline snapshot.
 ### Rejected defaults
 
 - Replace a generic sidebar plus detached dashboard cards with a report shelf
-  and a wide, stacked evidence-first workspace.
+  and a purposeful split ledger-and-evidence workspace.
 - Avoid rainbow fit scores; use one violet accent plus semantic amber and green.
 - Avoid card-grid job browsing; use ranked rows so comparison remains fast.
 - Avoid a detached calibration form; ask for optional feedback inside the
