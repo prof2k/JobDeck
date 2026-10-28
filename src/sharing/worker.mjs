@@ -83,7 +83,76 @@ function list(value, max = 20000) {
   return value;
 }
 
-// Copy only the public contract: extra fields can never leak into the shared snapshot.
+function officialURL(value) {
+  const candidate = text(value, 4096);
+  let parsed;
+  try { parsed = new URL(candidate); } catch { throw new Error('Invalid report URL.'); }
+  if (!['https:', 'http:'].includes(parsed.protocol)) throw new Error('Invalid report URL.');
+  return candidate;
+}
+
+function textList(value) {
+  if (!Array.isArray(value) || value.length > 200) throw new Error('Invalid report list.');
+  return value.map((item) => text(item, 10000));
+}
+
+function sanitizeEvaluation(input) {
+  if (!input || typeof input !== 'object') throw new Error('Invalid report evidence.');
+  const result = {
+    requirements: list(input.requirements, 500).map((item) => ({
+      requirement: text(item.requirement, 4000), match: text(item.match, 64),
+      evidence: text(item.evidence, 10000), source: text(item.source, 2000),
+    })),
+    gaps: textList(input.gaps), risks: textList(input.risks),
+  };
+  if (input.roleType) result.roleType = text(input.roleType);
+  if (['pass', 'maybe'].includes(input.screeningVerdict)) result.screeningVerdict = input.screeningVerdict;
+  if (input.companyPolicy) {
+    const policy = input.companyPolicy;
+    result.companyPolicy = {
+      summary: text(policy.summary, 10000), sourceUrl: officialURL(policy.sourceUrl),
+      verifiedAt: text(policy.verifiedAt, 40),
+      ...(policy.maximumApplications === undefined ? {} : { maximumApplications: integer(policy.maximumApplications) }),
+      ...(policy.windowDays === undefined ? {} : { windowDays: integer(policy.windowDays) }),
+    };
+  }
+  return result;
+}
+
+function sanitizeReport(input) {
+  if (input === null) return null;
+  if (!input?.report || !['search', 'calibration'].includes(input.report.kind)) throw new Error('Invalid report.');
+  const jobs = list(input.jobs, 1000).map((job) => {
+    if (!['ready', 'opened', 'applied', 'skipped', 'expired', 'rejected'].includes(job.state)
+      || !['A', 'B', 'C', 'D'].includes(job.fitClass)) throw new Error('Invalid report job.');
+    return {
+      id: integer(job.id, Number.MAX_SAFE_INTEGER), canonicalKey: text(job.canonicalKey, 512),
+      company: text(job.company, 500), title: text(job.title, 1000), location: text(job.location, 1000),
+      arrangement: text(job.arrangement, 500), salary: text(job.salary, 1000),
+      applicationUrl: officialURL(job.applicationUrl), source: text(job.source, 2000),
+      liveVerifiedAt: text(job.liveVerifiedAt, 40), state: job.state, rank: integer(job.rank, 1000),
+      fitClass: job.fitClass, score: job.score === null ? null : integer(job.score, 100),
+      recommendation: text(job.recommendation, 20000), evaluation: sanitizeEvaluation(job.evaluation),
+      feedbackVerdict: null, feedbackReason: null, feedbackNote: null,
+    };
+  });
+  const report = input.report;
+  if (integer(report.jobCount, 1000) !== jobs.length
+    || new Set(jobs.map((job) => job.canonicalKey)).size !== jobs.length
+    || new Set(jobs.map((job) => job.rank)).size !== jobs.length) throw new Error('Invalid report membership.');
+  return {
+    report: {
+      id: text(report.id, 512), kind: report.kind, title: text(report.title, 1000),
+      summary: text(report.summary, 20000), createdAt: text(report.createdAt, 40), lastOpenedAt: null,
+      groupBy: report.groupBy === 'roleType' ? 'roleType' : 'company', jobCount: jobs.length,
+      readyCount: jobs.filter((job) => ['ready', 'opened'].includes(job.state)).length,
+      appliedCount: jobs.filter((job) => job.state === 'applied').length,
+    },
+    jobs,
+  };
+}
+
+// The owner explicitly shares the latest batch. Private feedback and unknown fields are stripped.
 export function sanitizeSnapshot(input) {
   if (!input || input.version !== 1 || input.timezone !== 'UTC'
     || typeof input.updatedAt !== 'string' || !Number.isFinite(Date.parse(input.updatedAt))) {
@@ -101,6 +170,7 @@ export function sanitizeSnapshot(input) {
     })),
     targets: list(input.targets, 10000).map((entry) => ({ effectiveOn: date(entry.effectiveOn), target: integer(entry.target, 1000) })),
     days: list(input.days, 10000).map((entry) => ({ date: date(entry.date), applications: integer(entry.applications) })),
+    ...(input.latestReport === undefined ? {} : { latestReport: sanitizeReport(input.latestReport) }),
   };
 }
 

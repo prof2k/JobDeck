@@ -1,3 +1,5 @@
+import type { ReportDetail } from './types';
+
 export interface ProgressTask {
   id: string;
   title: string;
@@ -15,6 +17,7 @@ export interface ProgressSnapshot {
   completions: { taskId: string; period: string; completedOn: string }[];
   targets: { effectiveOn: string; target: number }[];
   days: { date: string; applications: number }[];
+  latestReport?: ReportDetail | null;
 }
 
 export interface SharingStatus {

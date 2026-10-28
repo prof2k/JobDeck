@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { ReportListItem, StatusSummary } from '../types';
 
-defineProps<{
+const props = defineProps<{
   reports: ReportListItem[];
   summary: StatusSummary | null;
   loading: boolean;
+  shared?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -16,6 +17,7 @@ function formatDate(value: string | null): string {
   return new Intl.DateTimeFormat('en', {
     dateStyle: 'medium',
     timeStyle: 'short',
+    timeZone: props.shared ? 'UTC' : undefined,
   }).format(new Date(value));
 }
 
@@ -33,10 +35,10 @@ function reportKindLabel(report: ReportListItem): string {
   <main class="report-shelf">
     <header class="shelf-heading">
       <div>
-        <p class="eyebrow">Local search ledger</p>
+        <p class="eyebrow">{{ shared ? 'Latest job batch' : 'Local search ledger' }}</p>
         <h1>Reports</h1>
         <p class="shelf-heading__copy">
-          Job-search reports, fit feedback, and application progress in one private place.
+          {{ shared ? 'Your latest job batch and application progress.' : 'Job-search reports, fit feedback, and application progress in one private place.' }}
         </p>
       </div>
       <dl v-if="summary" class="ledger-summary" aria-label="Job Deck summary">
@@ -62,7 +64,7 @@ function reportKindLabel(report: ReportListItem): string {
       <p class="eyebrow">No reports yet</p>
       <h2>The desk is ready.</h2>
       <p>
-        Your first 15-role feedback report will appear here when the search is ready.
+        {{ shared ? 'The latest job batch will appear here automatically.' : 'Your first 15-role feedback report will appear here when the search is ready.' }}
       </p>
     </div>
     <ol v-else class="report-list">
@@ -80,8 +82,8 @@ function reportKindLabel(report: ReportListItem): string {
             </span>
             <span class="report-entry__summary">{{ report.summary }}</span>
             <span class="report-entry__meta">
-              {{ report.jobCount }} jobs · {{ report.readyCount }} ready ·
-              last opened {{ formatDate(report.lastOpenedAt) }}
+              {{ report.jobCount }} jobs · {{ report.readyCount }} ready
+              <template v-if="!shared"> · last opened {{ formatDate(report.lastOpenedAt) }}</template>
             </span>
           </span>
           <span class="report-entry__progress" aria-hidden="true">

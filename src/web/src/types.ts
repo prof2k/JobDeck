@@ -11,6 +11,7 @@ export interface StatusSummary {
 }
 
 export interface ReportListItem {
+  groupBy?: 'company' | 'roleType';
   id: string;
   kind: 'calibration' | 'search';
   title: string;
@@ -38,6 +39,8 @@ export interface CompanyPolicy {
 }
 
 export interface Evaluation {
+  roleType?: string;
+  screeningVerdict?: 'pass' | 'maybe';
   requirements: EvidenceItem[];
   gaps: string[];
   risks: string[];

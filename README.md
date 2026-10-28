@@ -134,7 +134,8 @@ configured web tools and privacy settings.
 
 The Progress view adds recurring tasks, dated completions, and application
 targets. Optional sharing publishes only a progress snapshot to a
-password-protected, read-only Cloudflare viewer. It requires explicit connection
+password-protected, read-only Cloudflare viewer, including the latest job batch
+in the same report interface. It requires explicit connection
 to a deployed viewer; local tracking works without sharing. See
 [`src/sharing/README.md`](src/sharing/README.md) for its data contract, validation,
 and deployment steps.

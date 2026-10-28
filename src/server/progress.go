@@ -39,16 +39,17 @@ type progressDay struct {
 	Applications int    `json:"applications"`
 }
 
-// Shared progress deliberately excludes job details, notes, resumes, and credentials.
+// Only the latest report is included; private feedback, notes, and credentials are excluded.
 type progressSnapshot struct {
-	Version     int                  `json:"version"`
-	UpdatedAt   string               `json:"updatedAt"`
-	Timezone    string               `json:"timezone"`
-	Today       string               `json:"today"`
-	Tasks       []progressTask       `json:"tasks"`
-	Completions []progressCompletion `json:"completions"`
-	Targets     []progressTarget     `json:"targets"`
-	Days        []progressDay        `json:"days"`
+	Version      int                  `json:"version"`
+	UpdatedAt    string               `json:"updatedAt"`
+	Timezone     string               `json:"timezone"`
+	Today        string               `json:"today"`
+	Tasks        []progressTask       `json:"tasks"`
+	Completions  []progressCompletion `json:"completions"`
+	Targets      []progressTarget     `json:"targets"`
+	Days         []progressDay        `json:"days"`
+	LatestReport *reportDetail        `json:"latestReport,omitempty"`
 }
 
 func progressDate(now time.Time) string {
@@ -168,6 +169,10 @@ func readProgress(ctx context.Context, database *sql.DB, now time.Time) (progres
 		result.Days = append(result.Days, progressDay{Date: day, Applications: count})
 	}
 	sort.Slice(result.Days, func(i, j int) bool { return result.Days[i].Date < result.Days[j].Date })
+	result.LatestReport, err = readLatestSharedReport(ctx, tx)
+	if err != nil {
+		return result, err
+	}
 	if err := tx.Commit(); err != nil {
 		return result, err
 	}

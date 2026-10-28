@@ -85,3 +85,31 @@ test('malformed dates, oversize uploads, and old snapshots are rejected', async 
   expect((await publish({ ...snapshot(), updatedAt: '2026-10-27T12:00:00Z' })).status).toBe(409);
   expect(sanitizeSnapshot(snapshot())).toEqual(snapshot());
 });
+
+test('latest report keeps the existing UI fields and excludes private feedback', async () => {
+  const { publish, login, send } = fixture();
+  const job = {
+    id: 1, canonicalKey: 'fixture:latest', company: 'Example', title: 'Frontend Engineer',
+    location: 'Remote', arrangement: 'Remote', salary: 'Not listed', applicationUrl: 'https://example.com/jobs/1',
+    source: 'Official ATS', liveVerifiedAt: '2026-10-28T12:00:00Z', state: 'applied', rank: 1,
+    fitClass: 'A', score: 95, recommendation: 'Fixture fit.',
+    evaluation: { requirements: [], gaps: [], risks: [], roleType: 'Frontend', screeningVerdict: 'pass', privateNotes: 'DO_NOT_SHARE' },
+    feedbackReason: 'DO_NOT_SHARE', feedbackNote: 'DO_NOT_SHARE',
+  };
+  const latestReport = {
+    report: { id: 'latest', kind: 'search', title: 'Latest fixture', summary: '', createdAt: '2026-10-28T12:00:00Z', jobCount: 1, groupBy: 'roleType' },
+    jobs: [job], privateNotes: 'DO_NOT_SHARE',
+  };
+  expect((await publish({ ...snapshot(), latestReport })).status).toBe(200);
+  const session = await login();
+  const response = await send('/api/progress', { headers: { Cookie: session.headers.get('Set-Cookie').split(';')[0] } });
+  const body = await response.text();
+  const report = JSON.parse(body).latestReport;
+  expect(report.report.groupBy).toBe('roleType');
+  expect(report.report.appliedCount).toBe(1);
+  expect(report.jobs[0].evaluation.roleType).toBe('Frontend');
+  expect(report.jobs[0].feedbackNote).toBeNull();
+  expect(body).not.toContain('DO_NOT_SHARE');
+  expect((await publish({ ...snapshot(), latestReport: { ...latestReport, jobs: [{ ...job, applicationUrl: 'javascript:alert(1)' }] } })).status).toBe(400);
+  expect((await publish({ ...snapshot(), latestReport: { ...latestReport, jobs: [job, job] } })).status).toBe(400);
+});

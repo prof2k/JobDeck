@@ -3,8 +3,10 @@
 An opt-in, read-only progress viewer. The Vue static build and Worker deploy
 together; a private R2 bucket holds one `progress.json` snapshot. The local
 JobDeck ledger remains authoritative. The published schema contains task titles,
-recurrence, completion dates, target history, and dated application counts. It
-does not contain reports, job descriptions, resumes, or research notes.
+recurrence, completion dates, target history, dated application counts, and the
+latest completed job batch. The Reports tab reuses the local report shelf and
+split ledger/evidence components, with view-only access. Older batches, private
+feedback, resumes, credentials, and unknown research fields are excluded.
 
 ## Local verification
 
@@ -80,6 +82,10 @@ use `Cache-Control: no-store`; authenticated snapshots are not cached offline.
   two-second local reconciliation check also catches direct imports, updates from
   another local dashboard, and UTC rollover. Unchanged snapshots do not generate
   cloud writes. Successful snapshot hashes persist across restarts.
+- The newest batch is selected by creation date with a stable ID tie-breaker.
+  Its job memberships, evidence, grouping, and current states are shared. Reading
+  a shared report never updates `last_opened_at`, records an Opened event, or
+  changes application state. Links to official applications remain usable.
 - The viewer reads the last published snapshot on opening, returning to the
   tab, or pressing Refresh. It remains available when the local computer is off.
 

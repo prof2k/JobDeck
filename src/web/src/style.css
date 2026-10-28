@@ -1619,3 +1619,23 @@ h3 {
   .topbar-links { margin-left: 16px; gap: 12px; }
   .topbar__status { display: none; }
 }
+
+.company-heading {
+  background: var(--sheet);
+  color: var(--paper-secondary);
+  font-size: 0.8rem;
+  margin: 0;
+  padding: 12px 14px;
+}
+.job-row__identity .job-row__type { color: var(--violet); }
+.job-row__score .screening-verdict--maybe { color: var(--amber); }
+.job-row__score .screening-verdict--pass { color: var(--green); }
+.wordmark { text-decoration: none; }
+@media (max-width: 480px) {
+  .shared-shell .topbar__status { display: flex; }
+  .shared-shell .privacy-mark { display: none; }
+  .shared-shell .topbar-links { gap: 12px; margin-left: 12px; }
+  .shared-shell .quiet-button { padding: 8px; font-size: .72rem; }
+}
+.score-stamp .screening-verdict--maybe { color: var(--amber); }
+.score-stamp .screening-verdict--pass { color: var(--green); }

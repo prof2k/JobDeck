@@ -7,6 +7,7 @@ const props = defineProps<{
   reportId: string;
   calibration: boolean;
   offline: boolean;
+  readOnly?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -39,18 +40,19 @@ function formatDate(value: string): string {
   return new Intl.DateTimeFormat('en', {
     dateStyle: 'medium',
     timeStyle: 'short',
+    timeZone: props.readOnly ? 'UTC' : undefined,
   }).format(new Date(value));
 }
 
 function openApplication(): void {
-  if (props.offline) return;
+  if (props.offline || props.readOnly) return;
   if (props.job.state === 'ready') {
     emit('state', props.job, 'opened');
   }
 }
 
 function submitFeedback(): void {
-  if (!feedbackVerdict.value || props.offline) return;
+  if (!feedbackVerdict.value || props.offline || props.readOnly) return;
   emit('feedback', {
     job: props.job,
     verdict: feedbackVerdict.value,
@@ -70,7 +72,8 @@ function submitFeedback(): void {
         </div>
         <div class="score-stamp" :class="`score-stamp--${job.fitClass.toLowerCase()}`">
           <span>{{ scoreLabel }}</span>
-          <small>Class {{ job.fitClass }}</small>
+          <small v-if="job.evaluation.screeningVerdict" :class="`screening-verdict--${job.evaluation.screeningVerdict}`">{{ job.evaluation.screeningVerdict === 'maybe' ? 'Maybe' : 'Pass' }}</small>
+          <small v-else>Class {{ job.fitClass }}</small>
         </div>
       </header>
 
@@ -105,7 +108,7 @@ function submitFeedback(): void {
       </section>
 
       <section
-        v-if="calibration"
+        v-if="calibration && !readOnly"
         class="feedback-panel"
         :aria-labelledby="`feedback-title-${job.id}`"
       >
@@ -223,10 +226,10 @@ function submitFeedback(): void {
     </div>
 
     <footer class="evidence-actions">
-      <span>{{ offline ? 'Read-only cached snapshot' : 'Progress saves locally' }}</span>
+      <span>{{ readOnly ? 'Read-only report' : offline ? 'Read-only cached snapshot' : 'Progress saves locally' }}</span>
       <div>
         <button
-          v-if="job.state !== 'applied'"
+          v-if="!readOnly && job.state !== 'applied'"
           class="button button--quiet"
           type="button"
           :disabled="offline"
@@ -235,7 +238,7 @@ function submitFeedback(): void {
           Mark applied
         </button>
         <button
-          v-else
+          v-else-if="!readOnly"
           class="button button--quiet"
           type="button"
           :disabled="offline"

@@ -7,6 +7,7 @@ import {
 import type { ProgressSnapshot, ProgressTask } from '../progress';
 
 const props = defineProps<{ shared?: boolean }>();
+const emit = defineEmits<{ loaded: [snapshot: ProgressSnapshot]; signedOut: [] }>();
 const data = ref<ProgressSnapshot | null>(null);
 const day = ref(todayIn());
 const today = ref(todayIn());
@@ -40,12 +41,18 @@ async function load(): Promise<void> {
   try {
     if (!props.shared) await connect();
     const response = await fetch('/api/progress', { cache: 'no-store' });
-    if (response.status === 401) { locked.value = true; return; }
+    if (response.status === 401) {
+      locked.value = true;
+      data.value = null;
+      emit('signedOut');
+      return;
+    }
     if (!response.ok) {
       const body = await response.json() as { message?: string };
       throw new Error(body.message ?? 'Could not load progress.');
     }
     data.value = await response.json() as ProgressSnapshot;
+    emit('loaded', data.value);
     locked.value = false;
     today.value = todayIn(data.value.timezone);
   } catch (reason) {
@@ -80,6 +87,7 @@ async function logout(): Promise<void> {
   await request('/api/logout', { method: 'POST' });
   data.value = null;
   locked.value = true;
+  emit('signedOut');
 }
 
 function onFocus(): void {

@@ -60,6 +60,7 @@ type evaluationPayload struct {
 }
 
 type reportListItem struct {
+	GroupBy      string  `json:"groupBy,omitempty"`
 	ID           string  `json:"id"`
 	Kind         string  `json:"kind"`
 	Title        string  `json:"title"`
