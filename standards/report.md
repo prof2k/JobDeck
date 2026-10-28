@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-08-05
+last_updated: 2026-10-28
 status: living
 ---
 
@@ -33,8 +33,15 @@ rendered as standalone HTML.
 Show report title, calibration or full-search type, creation time, last-opened
 time, job count, Ready count, and application progress. The newest report leads.
 
-The library belongs only to the local dashboard. A standalone report opens
-directly to its one batch and must not imitate a multi-report database.
+The local dashboard retains the complete library. The password-protected shared
+viewer reuses the same library and split report interface for the newest
+completed batch only, selected by creation time. It shows current application
+states and official application links, while keeping marking, feedback controls,
+and private feedback exclusive to the local dashboard. Shared browsing never
+records owner activity. Shared timestamps use UTC.
+
+A standalone report opens directly to its one batch and must not imitate a
+multi-report database.
 
 ## Report detail
 
