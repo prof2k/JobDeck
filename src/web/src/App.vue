@@ -11,6 +11,8 @@ import {
 import ConnectionBanner from './components/ConnectionBanner.vue';
 import ReportShelf from './components/ReportShelf.vue';
 import ReportWorkspace from './components/ReportWorkspace.vue';
+import ProgressView from './components/ProgressView.vue';
+import SettingsView from './components/SettingsView.vue';
 import { readSnapshot, writeSnapshot } from './offlineStore';
 import type {
   FeedbackVerdict,
@@ -28,6 +30,8 @@ const loading = ref(true);
 const saving = ref(false);
 const offline = ref(false);
 const message = ref('');
+const progressVisible = ref(window.location.hash === '#/progress');
+const settingsVisible = ref(window.location.hash === '#/settings');
 
 function reportIdFromHash(): string | null {
   const match = window.location.hash.match(/^#\/reports\/(.+)$/);
@@ -85,6 +89,9 @@ async function loadReport(reportId: string): Promise<void> {
 }
 
 async function followRoute(): Promise<void> {
+  progressVisible.value = window.location.hash === '#/progress';
+  settingsVisible.value = window.location.hash === '#/settings';
+  if (progressVisible.value || settingsVisible.value) { currentReport.value = null; return; }
   const reportId = reportIdFromHash();
   if (reportId) {
     await loadReport(reportId);
@@ -172,6 +179,11 @@ onBeforeUnmount(() => {
         <span aria-hidden="true">J</span>
         <strong>Job Deck</strong>
       </button>
+      <div class="topbar-links">
+        <a href="#/" :aria-current="!progressVisible && !settingsVisible ? 'page' : undefined">Reports</a>
+        <a href="#/progress" :aria-current="progressVisible ? 'page' : undefined">Progress</a>
+        <a href="#/settings" :aria-current="settingsVisible ? 'page' : undefined">Settings</a>
+      </div>
       <div class="topbar__status">
         <span class="privacy-mark">Local only</span>
         <span class="connection-state" :class="{ offline }">
@@ -180,9 +192,11 @@ onBeforeUnmount(() => {
       </div>
     </nav>
 
-    <ConnectionBanner :offline="offline" :message="message" />
+    <ConnectionBanner v-if="!progressVisible && !settingsVisible" :offline="offline" :message="message" />
+    <ProgressView v-if="progressVisible" />
+    <SettingsView v-else-if="settingsVisible" />
 
-    <div v-if="loading && currentReport" class="screen-loader" role="status">
+    <div v-else-if="loading && currentReport" class="screen-loader" role="status">
       Reading report…
     </div>
     <ReportWorkspace

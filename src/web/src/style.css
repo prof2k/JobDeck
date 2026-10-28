@@ -1176,3 +1176,446 @@ h3 {
     transition-duration: 0.01ms !important;
   }
 }
+
+.topbar-links {
+  display: flex;
+  gap: 24px;
+  margin-right: auto;
+  margin-left: 40px;
+}
+
+.topbar-links a {
+  color: var(--paper-tertiary);
+  text-decoration: none;
+  font-size: .85rem;
+  padding: 20px 0;
+  border-bottom: 2px solid transparent;
+}
+
+.topbar-links a[aria-current="page"] {
+  color: var(--paper);
+  border-color: var(--violet);
+}
+
+.progress-page {
+  max-width: 1240px;
+  margin: auto;
+  padding: clamp(32px,6vw,80px) clamp(20px,4vw,48px);
+}
+
+.progress-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 40px;
+}
+
+.progress-copy {
+  color: var(--paper-secondary);
+  margin-bottom: 0;
+  max-width: 440px;
+  line-height: 1.6;
+}
+
+.progress-actions {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.progress-page label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--paper-secondary);
+  font-size: .8rem;
+}
+
+.progress-page input:not([type="checkbox"]), .progress-page select {
+  min-width: 0;
+  background: var(--inset);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  padding: 10px 12px;
+  font-size: .85rem;
+}
+
+.progress-page button {
+  cursor: pointer;
+}
+
+.progress-page button:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+.quiet-button, .primary-button {
+  border-radius: var(--radius-control);
+  padding: 10px 14px;
+  font-size: .8rem;
+  line-height: 1.3;
+}
+
+.quiet-button {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--paper-secondary);
+}
+
+.quiet-button:hover {
+  background: var(--raised);
+  color: var(--paper);
+}
+
+.primary-button {
+  background: var(--violet);
+  color: var(--desk);
+  border: 1px solid transparent;
+  font-weight: 650;
+}
+
+.progress-columns {
+  display: grid;
+  grid-template-columns: minmax(0,1.65fr) minmax(260px,1fr);
+  border-top: 1px solid var(--line);
+}
+
+.intentions {
+  padding: 32px 40px 32px 0;
+}
+
+.section-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.section-label h2 {
+  font-size: 1.2rem;
+  margin: 0;
+  letter-spacing: -.025em;
+}
+
+.section-label > span {
+  color: var(--paper-muted);
+  font-size: .78rem;
+}
+
+.application-task {
+  display: flex;
+  gap: 16px;
+  padding: 4px 0 28px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.application-task__icon {
+  color: var(--violet);
+  font-size: 1.2rem;
+  margin-top: 2px;
+}
+
+.application-task h3 {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+}
+
+.application-task p {
+  color: var(--paper-tertiary);
+  font-size: .85rem;
+  margin: 0 0 12px;
+}
+
+.target-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 4px 0 12px;
+}
+
+.target-form input {
+  width: 96px;
+}
+
+.intention-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.intention-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line-soft);
+  padding: 22px 0;
+}
+
+.intention-list li label {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  color: var(--paper);
+  font-size: .92rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.intention-list input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--green);
+  flex-shrink: 0;
+}
+
+.intention-list label > span {
+  overflow-wrap: anywhere;
+}
+
+.intention-list small {
+  display: block;
+  color: var(--paper-muted);
+  text-transform: capitalize;
+  font-size: .73rem;
+  margin-top: 6px;
+}
+
+.intention-list .intention-complete > span {
+  color: var(--paper-tertiary);
+  text-decoration: line-through;
+}
+
+.archive-task {
+  background: transparent;
+  border: 0;
+  color: var(--paper-muted);
+  font-size: .72rem;
+  padding: 8px 0 8px 8px;
+}
+
+.archive-task:hover {
+  color: var(--paper);
+}
+
+.add-intention {
+  display: grid;
+  grid-template-columns: minmax(100px,1fr) auto auto;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.progress-empty {
+  color: var(--paper-muted);
+  font-size: .85rem;
+  padding: 24px 0 8px;
+  line-height: 1.6;
+}
+
+.daily-progress {
+  border-left: 1px solid var(--line);
+  padding: 36px 0 32px 40px;
+}
+
+.progress-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin-top: 28px;
+  margin-bottom: 16px;
+}
+
+.progress-metric > span {
+  color: var(--paper-secondary);
+  font-size: .88rem;
+}
+
+.progress-metric > strong {
+  font-size: 2.3rem;
+  letter-spacing: -.05em;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.daily-progress progress {
+  display: block;
+  width: 100%;
+  height: 4px;
+  border: 0;
+  background: var(--raised);
+  border-radius: 0;
+  accent-color: var(--green);
+}
+
+.daily-progress progress::-webkit-progress-bar {
+  background: var(--raised);
+}
+
+.daily-progress progress::-webkit-progress-value, .daily-progress progress::-moz-progress-bar {
+  background: var(--green);
+}
+
+.daily-progress > p:not(.eyebrow) {
+  color: var(--paper-tertiary);
+  font-size: .78rem;
+  margin-top: 12px;
+}
+
+.weekly-progress {
+  border-top: 1px solid var(--line);
+  margin-top: 32px;
+  padding-top: 4px;
+}
+
+.weekly-progress strong {
+  font-size: 1.6rem;
+}
+
+.week-bars {
+  display: flex;
+  gap: 12px;
+  padding: 4px 0 16px;
+}
+
+.week-bars > div {
+  flex: 1;
+  text-align: center;
+  font-size: .72rem;
+  color: var(--paper-muted);
+}
+
+.week-bars__track {
+  display: block;
+  height: 60px;
+  background: var(--raised);
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.week-bars__track i {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--violet);
+}
+
+.progress-page .progress-hint {
+  color: var(--paper-muted);
+  font-size: .74rem;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.progress-footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  color: var(--paper-muted);
+  font-size: .72rem;
+  line-height: 1.7;
+}
+
+.progress-error {
+  color: var(--amber);
+  font-size: .85rem;
+  line-height: 1.6;
+}
+
+.sharing-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  border-top: 1px solid var(--line);
+  padding: 32px 0;
+}
+
+.sharing-panel h2, .progress-login h2 {
+  font-size: 1.5rem;
+}
+
+.sharing-panel p, .progress-login p {
+  color: var(--paper-tertiary);
+  font-size: .85rem;
+  line-height: 1.7;
+}
+
+.sharing-panel form, .progress-login {
+  display: grid;
+  gap: 16px;
+}
+
+.sharing-panel .quiet-button + .quiet-button {
+  margin-left: 8px;
+}
+
+.progress-login {
+  max-width: 400px;
+  padding-top: 40px;
+  margin: 0 auto;
+}
+
+@media (max-width: 800px) {
+  .progress-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    padding-bottom: 28px;
+  }
+
+  .progress-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .intentions {
+    padding-right: 0;
+  }
+
+  .daily-progress {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding: 28px 0;
+  }
+
+  .sharing-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .add-intention {
+    grid-template-columns: minmax(0,1fr) auto;
+  }
+
+  .add-intention > input {
+    grid-column: 1 / -1;
+  }
+
+  .topbar-links {
+    margin-left: 20px;
+    gap: 16px;
+  }
+
+  .topbar__status .privacy-mark {
+    display: none;
+  }
+
+}
+
+.settings-page { max-width: 960px; }
+.settings-section { border-top: 1px solid var(--line); padding: 28px 0; }
+.settings-section input { width: 120px; }
+.settings-section h2 { font-size: 1rem; }
+.settings-section p, .settings-status { color: var(--paper-tertiary); font-size: .8rem; line-height: 1.6; margin-top: 12px; }
+.settings-status { display: block; min-height: 20px; }
+@media (max-width: 480px) {
+  .topbar-links { margin-left: 16px; gap: 12px; }
+  .topbar__status { display: none; }
+}

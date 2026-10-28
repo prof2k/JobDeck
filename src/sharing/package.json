@@ -1,0 +1,14 @@
+{
+  "name": "jobdeck-shared-progress",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "build": "bun run --cwd ../web build:shared",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.154.0"
+  }
+}

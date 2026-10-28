@@ -132,6 +132,13 @@ Job Deck binds to `127.0.0.1`, keeps operational data under `private/`, and does
 not host candidate information. External research still uses the active agent's
 configured web tools and privacy settings.
 
+The Progress view adds recurring tasks, dated completions, and application
+targets. Optional sharing publishes only a progress snapshot to a
+password-protected, read-only Cloudflare viewer. It requires explicit connection
+to a deployed viewer; local tracking works without sharing. See
+[`src/sharing/README.md`](src/sharing/README.md) for its data contract, validation,
+and deployment steps.
+
 The toolkit must not submit applications, complete assessments, contact
 recruiters, or answer personal or legal questions on the user's behalf.
 

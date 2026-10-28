@@ -12,6 +12,8 @@ build.
   by the server build.
 - `static-report/` — dependency-free single-report HTML fallback for hosts that
   cannot run the local dashboard.
+- `sharing/` — optional Cloudflare Worker, private R2 snapshot, and shared viewer
+  build. Its deployment is separate from the local dashboard.
 - `scripts/` — narrow build and privacy helpers.
 
 The fictional import fixture lives at `examples/fictional-report.json`; it

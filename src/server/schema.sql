@@ -79,3 +79,23 @@ CREATE INDEX IF NOT EXISTS idx_job_events_job_time
   ON job_events(job_id, occurred_at DESC);
 CREATE INDEX IF NOT EXISTS idx_feedback_job_time
   ON job_feedback(job_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS progress_tasks (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  recurrence TEXT NOT NULL CHECK (recurrence IN ('once', 'daily', 'weekly', 'monthly', 'quarterly')),
+  starts_on TEXT NOT NULL,
+  archived_on TEXT
+);
+
+CREATE TABLE IF NOT EXISTS progress_completions (
+  task_id TEXT NOT NULL REFERENCES progress_tasks(id),
+  period TEXT NOT NULL,
+  completed_on TEXT NOT NULL,
+  PRIMARY KEY (task_id, period)
+);
+
+CREATE TABLE IF NOT EXISTS progress_targets (
+  effective_on TEXT PRIMARY KEY,
+  target INTEGER NOT NULL CHECK (target >= 0 AND target <= 1000)
+);

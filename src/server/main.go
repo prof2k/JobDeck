@@ -127,7 +127,12 @@ func serveCommand(arguments []string) error {
 
 	signalContext, stop := signal.NotifyContext(context.Background(),
 		os.Interrupt, syscall.SIGTERM)
-	defer stop()
+	publisherDone := make(chan struct{})
+	go func() {
+		defer close(publisherDone)
+		application.watchProgress(signalContext, 2*time.Second)
+	}()
+	defer func() { stop(); <-publisherDone }()
 	select {
 	case <-signalContext.Done():
 		shutdownContext, cancel := context.WithTimeout(context.Background(), 5*time.Second)

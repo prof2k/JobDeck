@@ -12,15 +12,19 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
 type applicationServer struct {
-	database *sql.DB
-	logger   *activityLogger
-	port     int
-	token    string
-	ui       http.Handler
+	database      *sql.DB
+	logger        *activityLogger
+	port          int
+	token         string
+	ui            http.Handler
+	sharingMu     sync.Mutex
+	publicationMu sync.Mutex
+	sharingWake   chan struct{}
 }
 
 func newApplicationServer(
@@ -37,11 +41,12 @@ func newApplicationServer(
 		return nil, err
 	}
 	return &applicationServer{
-		database: database,
-		logger:   logger,
-		port:     port,
-		token:    hex.EncodeToString(tokenBytes),
-		ui:       uiHandler,
+		database:    database,
+		sharingWake: make(chan struct{}, 1),
+		logger:      logger,
+		port:        port,
+		token:       hex.EncodeToString(tokenBytes),
+		ui:          uiHandler,
 	}, nil
 }
 
@@ -50,6 +55,10 @@ func (server *applicationServer) handler() http.Handler {
 	mux.HandleFunc("GET /api/health", server.health)
 	mux.HandleFunc("GET /api/session", server.session)
 	mux.HandleFunc("GET /api/summary", server.summary)
+	mux.HandleFunc("GET /api/progress", server.progress)
+	mux.HandleFunc("POST /api/progress", server.progressMutation)
+	mux.HandleFunc("GET /api/sharing", server.sharing)
+	mux.HandleFunc("PUT /api/sharing", server.configureSharing)
 	mux.HandleFunc("GET /api/reports", server.reports)
 	mux.HandleFunc("GET /api/reports/{reportID}", server.report)
 	mux.HandleFunc("PUT /api/jobs/{jobID}/state", server.jobState)
@@ -138,6 +147,7 @@ func (server *applicationServer) jobState(writer http.ResponseWriter, request *h
 			fmt.Println("jobdeck: activity log:", logErr)
 		}
 	}
+	server.publishAfterChange(request.Context())
 	writeJSON(writer, http.StatusOK, map[string]string{"state": input.State})
 }
 

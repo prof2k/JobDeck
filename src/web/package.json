@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vue-tsc -b && vite build",
+    "build:shared": "vue-tsc -b && vite build --mode shared && bun ../sharing/prepare-static.mjs",
     "dev": "vite --host 127.0.0.1",
     "typecheck": "vue-tsc -b"
   },
