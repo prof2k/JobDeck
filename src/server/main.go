@@ -61,6 +61,11 @@ func run(arguments []string) error {
 }
 
 func serveCommand(arguments []string) error {
+	if name := os.Getenv("JOBDECK_TIMEZONE"); name != "" {
+		if _, err := time.LoadLocation(name); err != nil || name == "Local" {
+			return fmt.Errorf("invalid JOBDECK_TIMEZONE %q: use an IANA time zone", name)
+		}
+	}
 	flags := flag.NewFlagSet("serve", flag.ContinueOnError)
 	dataPath := flags.String("data", defaultDatabasePath(), "SQLite database path")
 	port := flags.Int("port", defaultPort, "fixed loopback port")

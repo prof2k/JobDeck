@@ -1,9 +1,16 @@
 import { expect, test } from 'bun:test';
-import { activeTasks, isComplete, periodFor, targetFor, lastSevenDays } from '../src/progress';
+import { activeTasks, isComplete, periodFor, targetFor, lastSevenDays, todayIn } from '../src/progress';
 import type { ProgressSnapshot, ProgressTask } from '../src/progress';
 
 const task: ProgressTask = { id: 'fictional', title: 'Practice', recurrence: 'daily', startsOn: '2026-10-01', archivedOn: null };
 const data: ProgressSnapshot = { version: 1, updatedAt: '', timezone: 'UTC', today: '2026-10-28', tasks: [task], completions: [{ taskId: task.id, period: '2026-10-27', completedOn: '2026-10-27' }], targets: [{ effectiveOn: '2026-10-01', target: 20 }, { effectiveOn: '2026-10-28', target: 30 }], days: [] };
+
+test('today follows local midnight including daylight saving offsets', () => {
+  expect(todayIn('America/Chicago', new Date('2026-10-29T04:59:59Z'))).toBe('2026-10-28');
+  expect(todayIn('America/Chicago', new Date('2026-10-29T05:00:00Z'))).toBe('2026-10-29');
+  expect(todayIn('America/Chicago', new Date('2026-11-02T05:59:59Z'))).toBe('2026-11-01');
+  expect(todayIn('America/Chicago', new Date('2026-11-02T06:00:00Z'))).toBe('2026-11-02');
+});
 
 test('daily tasks reset without losing yesterday and target changes preserve history', () => {
   expect(isComplete(data, task, '2026-10-27')).toBe(true);

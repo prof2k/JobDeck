@@ -18,6 +18,7 @@ const password = ref('');
 const locked = ref(false);
 const title = ref('');
 const recurrence = ref<ProgressTask['recurrence']>('daily');
+let rolloverTimer: ReturnType<typeof setInterval> | undefined;
 const tasks = computed(() => (data.value ? activeTasks(data.value, day.value) : []));
 const completed = computed(() => tasks.value.filter((task) => data.value
   && isComplete(data.value, task, day.value)).length);
@@ -51,10 +52,12 @@ async function load(): Promise<void> {
       const body = await response.json() as { message?: string };
       throw new Error(body.message ?? 'Could not load progress.');
     }
+    const followToday = day.value === today.value;
     data.value = await response.json() as ProgressSnapshot;
     emit('loaded', data.value);
     locked.value = false;
     today.value = todayIn(data.value.timezone);
+    if (followToday) day.value = today.value;
   } catch (reason) {
     error.value = reason instanceof Error ? reason.message : 'Could not load progress.';
   } finally { loading.value = false; }
@@ -96,8 +99,17 @@ function onFocus(): void {
   today.value = next;
   if (!locked.value && !saving.value) void load();
 }
-onMounted(() => { void load(); window.addEventListener('focus', onFocus); });
-onUnmounted(() => window.removeEventListener('focus', onFocus));
+onMounted(() => {
+  void load();
+  window.addEventListener('focus', onFocus);
+  rolloverTimer = setInterval(() => {
+    if (todayIn(data.value?.timezone) !== today.value) onFocus();
+  }, 30_000);
+});
+onUnmounted(() => {
+  window.removeEventListener('focus', onFocus);
+  clearInterval(rolloverTimer);
+});
 </script>
 
 <template>
@@ -170,8 +182,8 @@ onUnmounted(() => window.removeEventListener('focus', onFocus));
         </aside>
       </div>
       <footer class="progress-footer">
-        <span>UTC</span>
-        <span v-if="shared">Updated {{ new Date(data.updatedAt).toLocaleString('en', { timeZone: 'UTC' }) }} UTC</span>
+        <span>Local time · {{ data.timezone }}</span>
+        <span v-if="shared">Updated {{ new Date(data.updatedAt).toLocaleString('en', { timeZone: data.timezone, timeZoneName: 'short' }) }}</span>
       </footer>
     </template>
   </main>

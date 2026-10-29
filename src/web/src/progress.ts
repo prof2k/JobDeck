@@ -27,10 +27,10 @@ export interface SharingStatus {
   error: string;
 }
 
-export function todayIn(timezone = 'UTC'): string {
+export function todayIn(timezone = Intl.DateTimeFormat().resolvedOptions().timeZone, now = new Date()): string {
   return new Intl.DateTimeFormat('en-CA', {
     timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit',
-  }).format(new Date());
+  }).format(now);
 }
 
 export function periodFor(task: ProgressTask, day: string): string {

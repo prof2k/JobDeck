@@ -66,7 +66,14 @@ use `Cache-Control: no-store`; authenticated snapshots are not cached offline.
 
 ## Progress semantics
 
-- Dates and application-day boundaries use UTC. The viewer displays update timestamps in UTC.
+- Progress dates and application-day boundaries follow the owner's local time
+  zone, detected from the local machine or configured with `JOBDECK_TIMEZONE`
+  using an IANA name. The shared snapshot carries that zone so viewers agree on
+  which day is today. Daylight saving changes follow the zone's calendar rules.
+  Existing date-only tasks, targets, and completions keep their chosen dates;
+  dated application events are regrouped from their original timestamps.
+  Update timestamps display in the owner's zone; report timestamps display in
+  the browser's local time. Machines without a recognized zone fall back to UTC.
 - Applications count distinct jobs by their first explicit Applied event.
   Opening a job does not count. Undated legacy application states are not
   assigned invented dates.
@@ -80,7 +87,7 @@ use `Cache-Control: no-store`; authenticated snapshots are not cached offline.
 - Changes save locally first and notify a single background publisher immediately.
   The UI does not wait for the upload. Failed uploads retry automatically. A
   two-second local reconciliation check also catches direct imports, updates from
-  another local dashboard, and UTC rollover. Unchanged snapshots do not generate
+  another local dashboard, and local midnight. Unchanged snapshots do not generate
   cloud writes. Successful snapshot hashes persist across restarts.
 - The newest batch is selected by creation date with a stable ID tie-breaker.
   Its job memberships, evidence, grouping, and current states are shared. Reading

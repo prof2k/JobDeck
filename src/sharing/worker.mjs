@@ -154,12 +154,15 @@ function sanitizeReport(input) {
 
 // The owner explicitly shares the latest batch. Private feedback and unknown fields are stripped.
 export function sanitizeSnapshot(input) {
-  if (!input || input.version !== 1 || input.timezone !== 'UTC'
+  if (!input || input.version !== 1
     || typeof input.updatedAt !== 'string' || !Number.isFinite(Date.parse(input.updatedAt))) {
     throw new Error('Unsupported progress snapshot.');
   }
+  const timezone = text(input.timezone, 100);
+  try { new Intl.DateTimeFormat('en', { timeZone: timezone }).format(); }
+  catch { throw new Error('Invalid progress time zone.'); }
   return {
-    version: 1, timezone: input.timezone, updatedAt: text(input.updatedAt, 40), today: date(input.today),
+    version: 1, timezone, updatedAt: text(input.updatedAt, 40), today: date(input.today),
     tasks: list(input.tasks, 1000).map((task) => {
       if (!['once', 'daily', 'weekly', 'monthly', 'quarterly'].includes(task.recurrence)) throw new Error('Invalid recurrence.');
       return { id: text(task.id, 64), title: text(task.title), recurrence: task.recurrence,

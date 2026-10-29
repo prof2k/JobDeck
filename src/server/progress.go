@@ -8,12 +8,28 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"sort"
 	"strings"
 	"time"
 )
 
-const progressTimezone = "UTC"
+// Share the owner's calendar day, even when a viewer is in another time zone.
+func progressLocation() *time.Location {
+	name := os.Getenv("JOBDECK_TIMEZONE")
+	if name == "" {
+		if path, err := os.Readlink("/etc/localtime"); err == nil {
+			_, name, _ = strings.Cut(path, "/zoneinfo/")
+		}
+	}
+	if name == "" {
+		name = time.Local.String()
+	}
+	if location, err := time.LoadLocation(name); err == nil && name != "Local" {
+		return location
+	}
+	return time.UTC
+}
 
 type progressTask struct {
 	ID         string  `json:"id"`
@@ -53,7 +69,7 @@ type progressSnapshot struct {
 }
 
 func progressDate(now time.Time) string {
-	return now.UTC().Format(time.DateOnly)
+	return now.In(progressLocation()).Format(time.DateOnly)
 }
 
 func parseProgressDate(value string) (time.Time, error) {
@@ -81,8 +97,9 @@ func taskPeriod(task progressTask, day string) string {
 }
 
 func readProgress(ctx context.Context, database *sql.DB, now time.Time) (progressSnapshot, error) {
+	location := progressLocation()
 	result := progressSnapshot{Version: 1, UpdatedAt: now.UTC().Format(time.RFC3339Nano),
-		Timezone: progressTimezone, Today: progressDate(now), Tasks: []progressTask{},
+		Timezone: location.String(), Today: now.In(location).Format(time.DateOnly), Tasks: []progressTask{},
 		Completions: []progressCompletion{}, Targets: []progressTarget{}, Days: []progressDay{}}
 	// A transaction keeps a snapshot internally consistent while other tabs save changes.
 	tx, err := database.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
@@ -141,7 +158,7 @@ func readProgress(ctx context.Context, database *sql.DB, now time.Time) (progres
 		return result, err
 	}
 	rows.Close()
-	// Count each job once, on its first explicit Applied event, in UTC.
+	// Count each job once, on its first explicit Applied event, in the owner's local day.
 	rows, err = tx.QueryContext(ctx, "SELECT MIN(occurred_at) FROM job_events WHERE event_type = 'applied' GROUP BY job_id")
 	if err != nil {
 		return result, err
@@ -158,7 +175,7 @@ func readProgress(ctx context.Context, database *sql.DB, now time.Time) (progres
 			rows.Close()
 			return result, fmt.Errorf("invalid application timestamp: %w", err)
 		}
-		counts[progressDate(when)]++
+		counts[when.In(location).Format(time.DateOnly)]++
 	}
 	if err := rows.Err(); err != nil {
 		rows.Close()

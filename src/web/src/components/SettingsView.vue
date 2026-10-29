@@ -8,6 +8,7 @@ const target = ref(0);
 const ready = ref(false);
 const status = ref('');
 const error = ref('');
+const timezone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 let timer: ReturnType<typeof setTimeout> | undefined;
 let queue = Promise.resolve();
 
@@ -15,7 +16,8 @@ async function load(): Promise<void> {
   try {
     await connect();
     const data = await request<ProgressSnapshot>('/api/progress');
-    target.value = targetFor(data, todayIn());
+    timezone.value = data.timezone;
+    target.value = targetFor(data, todayIn(timezone.value));
     ready.value = true;
   } catch { error.value = 'Could not load settings.'; }
 }
@@ -34,7 +36,7 @@ function save(): void {
       try {
         await request('/api/progress', {
           method: 'POST',
-          body: JSON.stringify({ action: 'target', target: value, date: todayIn() }),
+          body: JSON.stringify({ action: 'target', target: value, date: todayIn(timezone.value) }),
         });
         if (target.value === value) status.value = 'Saved';
       } catch { error.value = 'Could not save the target.'; status.value = ''; }
@@ -56,6 +58,6 @@ onMounted(load);
       <span class="settings-status" role="status">{{ status }}</span>
       <p>Applies from today. Earlier targets stay in your history.</p>
     </section>
-    <section class="settings-section"><h2>Dates</h2><p>UTC</p></section>
+    <section class="settings-section"><h2>Dates</h2><p>Local time · {{ timezone }}</p></section>
   </main>
 </template>

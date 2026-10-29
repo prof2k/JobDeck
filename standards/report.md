@@ -38,7 +38,8 @@ viewer reuses the same library and split report interface for the newest
 completed batch only, selected by creation time. It shows current application
 states and official application links, while keeping marking, feedback controls,
 and private feedback exclusive to the local dashboard. Shared browsing never
-records owner activity. Shared timestamps use UTC.
+records owner activity. Report timestamps use the browser's local time. Progress
+days and daily resets use the owner's local time zone, shared with the snapshot.
 
 A standalone report opens directly to its one batch and must not imitate a
 multi-report database.

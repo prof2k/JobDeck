@@ -13,6 +13,7 @@ import (
 )
 
 func TestProgressApplicationDatesAndDeduplication(t *testing.T) {
+	t.Setenv("JOBDECK_TIMEZONE", "UTC")
 	db, err := openDatabase(filepath.Join(t.TempDir(), "progress.sqlite"))
 	if err != nil {
 		t.Fatal(err)
@@ -37,6 +38,38 @@ func TestProgressApplicationDatesAndDeduplication(t *testing.T) {
 	contents, _ := json.Marshal(snapshot)
 	if strings.Contains(string(contents), "Fictional") || strings.Contains(string(contents), "example.com") {
 		t.Fatal("job details leaked into snapshot")
+	}
+	t.Setenv("JOBDECK_TIMEZONE", "America/Chicago")
+	snapshot, err = readProgress(context.Background(), db, time.Date(2026, 10, 29, 4, 30, 0, 0, time.UTC))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if snapshot.Timezone != "America/Chicago" || snapshot.Today != "2026-10-28" || len(snapshot.Days) != 1 || snapshot.Days[0].Date != "2026-10-27" {
+		t.Fatalf("local calendar day or first application grouping is wrong: %+v", snapshot)
+	}
+}
+
+func TestProgressLocalMidnightAndDaylightSaving(t *testing.T) {
+	t.Setenv("JOBDECK_TIMEZONE", "America/Chicago")
+	for _, test := range []struct{ stamp, day string }{
+		{"2026-10-29T04:59:59Z", "2026-10-28"},
+		{"2026-10-29T05:00:00Z", "2026-10-29"},
+		{"2026-11-02T05:59:59Z", "2026-11-01"},
+		{"2026-11-02T06:00:00Z", "2026-11-02"},
+		{"2026-03-08T07:59:59Z", "2026-03-08"},
+		{"2026-03-08T08:00:00Z", "2026-03-08"},
+	} {
+		stamp, err := time.Parse(time.RFC3339, test.stamp)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := progressDate(stamp); got != test.day {
+			t.Errorf("%s: got %s, want %s", test.stamp, got, test.day)
+		}
+	}
+	t.Setenv("JOBDECK_TIMEZONE", "Invalid/Timezone")
+	if err := serveCommand(nil); err == nil || !strings.Contains(err.Error(), "JOBDECK_TIMEZONE") {
+		t.Fatal("invalid time zone must fail before starting a server")
 	}
 }
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ReportListItem, StatusSummary } from '../types';
 
-const props = defineProps<{
+defineProps<{
   reports: ReportListItem[];
   summary: StatusSummary | null;
   loading: boolean;
@@ -17,7 +17,6 @@ function formatDate(value: string | null): string {
   return new Intl.DateTimeFormat('en', {
     dateStyle: 'medium',
     timeStyle: 'short',
-    timeZone: props.shared ? 'UTC' : undefined,
   }).format(new Date(value));
 }
 

@@ -86,6 +86,14 @@ test('malformed dates, oversize uploads, and old snapshots are rejected', async 
   expect(sanitizeSnapshot(snapshot())).toEqual(snapshot());
 });
 
+test('owner local time zones survive sharing and invalid zones are rejected', async () => {
+  const { publish } = fixture();
+  const local = { ...snapshot(), timezone: 'America/Chicago' };
+  expect(sanitizeSnapshot(local)).toEqual(local);
+  expect((await publish(local)).status).toBe(200);
+  expect((await publish({ ...local, timezone: 'Invalid/Timezone' })).status).toBe(400);
+});
+
 test('latest report keeps the existing UI fields and excludes private feedback', async () => {
   const { publish, login, send } = fixture();
   const job = {
